@@ -1,0 +1,125 @@
+name: PR (production)
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches: [master]
+    paths: ["**.cs"]
+jobs:
+  dotnet-format:
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_VERSION: 5.0.x
+      DOTNET_FORMAT_VERSION: 5.1.250801
+      GC_PACKAGE_PATH: ./Packages/GameCanvas/
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Get commit message
+        id: log
+        run: echo "::set-output name=message::$(git log --no-merges -1 --oneline)"
+
+      - name: Check folder existence
+        if: contains(steps.log.outputs.message, 'skip ci') != 'true'
+        id: check_folder
+        uses: andstor/file-existence-action@v1
+        with:
+          files: ${{ env.GC_PACKAGE_PATH }}
+
+      - name: Setup .NET Core SDK
+        if: steps.check_folder.outputs.files_exists == 'true'
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Cache .NET Tools
+        if: steps.check_folder.outputs.files_exists == 'true'
+        id: dotnet_tools_cache
+        uses: actions/cache@v3
+        with:
+          path: ${ env.DOTNET_ROOT }/tools
+          key: ${{ runner.os }}-dotnet-tools-${{ env.DOTNET_VERSION }}
+          restore-keys: |
+            ${{ runner.os }}-dotnet-tools-
+
+      - name: Install dotnet-format
+        if: steps.check_folder.outputs.files_exists == 'true'
+        run: dotnet tool install -g dotnet-format --version ${{ env.DOTNET_FORMAT_VERSION }}
+
+      - name: DryRun dotnet-format
+        if: steps.check_folder.outputs.files_exists == 'true'
+        id: format
+        uses: brmenchl/dotnet-format@v1.0.2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          action: "check"
+          folder: ${{ env.GC_PACKAGE_PATH }}
+          fail-fast: false
+
+      - name: Run dotnet-format
+        if: steps.format.outputs.has-changes == 'true'
+        uses: brmenchl/dotnet-format@v1.0.2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          action: "fix"
+          folder: ${{ env.GC_PACKAGE_PATH }}
+
+      - name: Commit
+        if: steps.format.outputs.has-changes == 'true'
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -a -m 'refactor: dotnet-format による自動整形 [skip ci]
+          Co-authored-by: ${{ github.event.pull_request.user.login }} <${{ github.event.pull_request.user.id }}+${{ github.event.pull_request.user.login }}@users.noreply.github.com>'
+
+      - name: Push
+        if: steps.format.outputs.has-changes == 'true'
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.event.pull_request.head.ref }}
+
+  test-unity-editmode:
+    name: Test on Unity ${{ matrix.unity-version }}
+    strategy:
+      matrix:
+        unity-version:
+          - 2022.3.24f1
+    env:
+      UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+      UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+      UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+    runs-on: ubuntu-latest
+    container:
+      image: unityci/editor:ubuntu-${{ matrix.unity-version }}-linux-il2cpp-1
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/cache@v2
+        with:
+          path: ./Library
+          key: ${{ runner.os }}-unity-library-${{ matrix.unity-version }}
+          restore-keys: |
+            ${{ runner.os }}-unity-library-
+
+      - name: Activate
+        id: activate
+        run: unity-editor -quit -batchmode -nographics -silent-crashes -logFile -serial ${{ secrets.UNITY_SERIAL }} -username '${{ secrets.UNITY_EMAIL }}' -password '${{ secrets.UNITY_PASSWORD }}' || exit 0
+      
+      - name: Test EditMode
+        run: unity-editor -batchmode -nographics -silent-crashes -logFile -runTests -testResults ./test-result-editor.xml
+
+      - uses: actions/upload-artifact@v2
+        if: always() && steps.activate.conclusion == 'success'
+        with:
+          name: TestRunner Result (${{ matrix.unity-version }})
+          path: |
+            ./test-result-editor.xml
+          
+      - name: Deactivate
+        if: always() && steps.activate.conclusion == 'success'
+        run: unity-editor -quit -batchmode -nographics -silent-crashes -logFile -returnlicense || exit 0
