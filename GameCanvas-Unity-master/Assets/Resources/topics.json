@@ -1,0 +1,484 @@
+{
+  "topics": [
+    {
+      "id": "1-01",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんなコンビニはイヤだ。どんなの？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "1-02",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな動物園はイヤだ。どんなの？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "1-03",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな温泉旅館はイヤだ。どんなの？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "1-04",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな新幹線はイヤだ。どんなの？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "1-05",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな図書館はイヤだ。どんなの？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "1-06",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな宅配便はイヤだ。どんなの？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "1-07",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな学校はイヤだ。どんなの？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "1-08",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんなお寿司屋さんはイヤだ。どんなの？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "1-09",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんなビーチはイヤだ。どんなの？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "1-10",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな動物のショーはイヤだ。どんなの？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "1-11",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな宇宙ステーションはイヤだ。どんなの？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "1-12",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな結婚式はイヤだ。どんなの？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "1-13",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんなゲーセンはイヤだ。どんなの？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "1-14",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんなプロ野球はイヤだ。どんなの？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "1-15",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんなコーヒーショップはイヤだ。どんなの？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "1-16",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな飛行機はイヤだ。どんなの？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "1-17",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな猫カフェはイヤだ。どんなの？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "1-18",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな美術館はイヤだ。どんなの？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "1-19",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんなキャンプ場はイヤだ。どんなの？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "1-20",
+      "category": "こんな〇〇はイヤだ",
+      "prompt": "こんな婚活パーティーはイヤだ。どんなの？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "2-01",
+      "category": "セリフ・一言",
+      "prompt": "吸血鬼が血を断つと決めた瞬間に言った一言は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "2-02",
+      "category": "セリフ・一言",
+      "prompt": "オリンピックで金メダルを取った選手が去り際に言った一言は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "2-03",
+      "category": "セリフ・一言",
+      "prompt": "宇宙人に乗っ取られた政治家が記者会見で発した一言は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "2-04",
+      "category": "セリフ・一言",
+      "prompt": "自動販売機に恋した人がこぼした一言は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "2-05",
+      "category": "セリフ・一言",
+      "prompt": "引っ越し業者が最後のトラックを降りるときに言った一言は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "2-06",
+      "category": "セリフ・一言",
+      "prompt": "夢から覚めた人が枕元でつぶやいた一言は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "2-07",
+      "category": "セリフ・一言",
+      "prompt": "ゲームのラスボスがエンディングで笑いながら言った一言は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "2-08",
+      "category": "セリフ・一言",
+      "prompt": "猫の飼い主が飼い猫に向かって言った一言は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "2-09",
+      "category": "セリフ・一言",
+      "prompt": "無人島の探検隊が最後に残した落書き一行は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "2-10",
+      "category": "セリフ・一言",
+      "prompt": "伝説の忍者が抜刀前に心の中で呟いた一言は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "2-11",
+      "category": "セリフ・一言",
+      "prompt": "宇宙船が地球に帰還する直前にクルーが言った一言は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "2-12",
+      "category": "セリフ・一言",
+      "prompt": "巨大ロボットのパイロットが降りるときに言った一言は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "2-13",
+      "category": "セリフ・一言",
+      "prompt": "夜中のコンビニで店員がつぶやいた一言は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "2-14",
+      "category": "セリフ・一言",
+      "prompt": "おばあちゃんが孫に最後に残した一言は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "2-15",
+      "category": "セリフ・一言",
+      "prompt": "オレオレ詐欺の犯人が電話を切る直前に言った一言は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "2-16",
+      "category": "セリフ・一言",
+      "prompt": "タイムトラベラーが過去の自分に贈った一言は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "2-17",
+      "category": "セリフ・一言",
+      "prompt": "ロボットが感情を持った瞬間に呟いた一言は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "2-18",
+      "category": "セリフ・一言",
+      "prompt": "超能力者がその力を封印する前に言った一言は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "2-19",
+      "category": "セリフ・一言",
+      "prompt": "電車が走らなくなった時に車掌が叫んだ一言は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "2-20",
+      "category": "セリフ・一言",
+      "prompt": "パン屋さんが焼き上がりのパンに向かって言った一言は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "3-01",
+      "category": "ネーミング・タイトル",
+      "prompt": "世界一売れ残った飲み物の名前は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "3-02",
+      "category": "ネーミング・タイトル",
+      "prompt": "軍隊が編成したインフルエンサー部隊の名称は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "3-03",
+      "category": "ネーミング・タイトル",
+      "prompt": "まったく売れないファッションブランド名を教えてください",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "3-04",
+      "category": "ネーミング・タイトル",
+      "prompt": "103歳のアイドルグループの名前は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "3-05",
+      "category": "ネーミング・タイトル",
+      "prompt": "ドキュメンタリー番組のタイトルで誰も見たくない名前は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "3-06",
+      "category": "ネーミング・タイトル",
+      "prompt": "自宅でできる悩み相談のタイトルは？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "3-07",
+      "category": "ネーミング・タイトル",
+      "prompt": "ものすごく地味なヒーローチームの名称は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "3-08",
+      "category": "ネーミング・タイトル",
+      "prompt": "インスタ映えしないレストラン名は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "3-09",
+      "category": "ネーミング・タイトル",
+      "prompt": "スマホアプリで絶対に消される名前は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "3-10",
+      "category": "ネーミング・タイトル",
+      "prompt": "秘密結社の会報のタイトルは？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "3-11",
+      "category": "ネーミング・タイトル",
+      "prompt": "とんでもないダイエット本のタイトルは？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "3-12",
+      "category": "ネーミング・タイトル",
+      "prompt": "パソコンのマニュアルで使われる最悪のタイトルは？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "3-13",
+      "category": "ネーミング・タイトル",
+      "prompt": "真夜中に読まれるホラー漫画のタイトルは？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "3-14",
+      "category": "ネーミング・タイトル",
+      "prompt": "田舎の廃墟が観光地になるときのリーフレット名は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "3-15",
+      "category": "ネーミング・タイトル",
+      "prompt": "失敗続きのゲーム実況者のチャンネル名は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "3-16",
+      "category": "ネーミング・タイトル",
+      "prompt": "毎日が休日になる町のキャッチコピーは？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "3-17",
+      "category": "ネーミング・タイトル",
+      "prompt": "嫌われ者キャラだけを集めたユニット名は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "3-18",
+      "category": "ネーミング・タイトル",
+      "prompt": "逆説的な自己啓発本のタイトルは？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "3-19",
+      "category": "ネーミング・タイトル",
+      "prompt": "本当に行きたくない旅行ガイドのタイトルは？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "3-20",
+      "category": "ネーミング・タイトル",
+      "prompt": "あらゆる会議が長引く会社のスローガンは？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "4-01",
+      "category": "穴埋め",
+      "prompt": "『冷やし中華はじめました』みたいに言うな。何を言った？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "4-02",
+      "category": "穴埋め",
+      "prompt": "『桃太郎が鬼ヶ島へ行くのをやめた理由。』『きびだんごを忘れた』よりも酷い理由とは？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "4-03",
+      "category": "穴埋め",
+      "prompt": "『新年度のプロジェクトは始まる』と言った直後の穴埋め。何が入る？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "4-04",
+      "category": "穴埋め",
+      "prompt": "『本日の講義内容は〇〇でした』。〇〇に入ると最悪な内容は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "4-05",
+      "category": "穴埋め",
+      "prompt": "『僕の趣味は〇〇』。〇〇に入るとやばい趣味は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "4-06",
+      "category": "穴埋め",
+      "prompt": "『この商品の売りは〇〇』。〇〇に入ると誰も買わない要素は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "4-07",
+      "category": "穴埋め",
+      "prompt": "『今週の天気は〇〇です』に入ると大混乱になる言葉は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "4-08",
+      "category": "穴埋め",
+      "prompt": "『面接では〇〇をアピールしてください』。〇〇に入ると逆効果なアドバイスは？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "4-09",
+      "category": "穴埋め",
+      "prompt": "『次の合言葉は〇〇』。〇〇に入れると裏切りが発覚する合言葉は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "4-10",
+      "category": "穴埋め",
+      "prompt": "『この番組の見どころは〇〇です』。〇〇に入れてはいけない見どころは？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "4-11",
+      "category": "穴埋め",
+      "prompt": "『今日のモーニングは〇〇』。〇〇に入れて胃腸が心配になる内容は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "4-12",
+      "category": "穴埋め",
+      "prompt": "『5年後の目標は〇〇』。に入れると絶望するような目標は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "4-13",
+      "category": "穴埋め",
+      "prompt": "『事故原因は〇〇』。〇〇に入ると呑気すぎる事故報告は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "4-14",
+      "category": "穴埋め",
+      "prompt": "『この映画のオチは〇〇』。〇〇に入りすぎて台無しになるオチは？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "4-15",
+      "category": "穴埋め",
+      "prompt": "『電話の最後に〇〇』。〇〇に入れると関係が壊れる一言は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "4-16",
+      "category": "穴埋め",
+      "prompt": "『パーティーのテーマは〇〇』。〇〇に入れると盛り上がらないテーマは？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "4-17",
+      "category": "穴埋め",
+      "prompt": "『お詫びの言葉は〇〇』。〇〇に入れると真逆の謝罪になる言葉は？",
+      "difficulty": "Normal"
+    },
+    {
+      "id": "4-18",
+      "category": "穴埋め",
+      "prompt": "『結婚式の誓いの言葉は〇〇』。〇〇に入れると取り消したくなる言葉は？",
+      "difficulty": "Hard"
+    },
+    {
+      "id": "4-19",
+      "category": "穴埋め",
+      "prompt": "『教壇で〇〇』。〇〇に入れると最悪の授業になる一言は？",
+      "difficulty": "Easy"
+    },
+    {
+      "id": "4-20",
+      "category": "穴埋め",
+      "prompt": "『退職理由は〇〇』。〇〇に入ると会社が倒産するような理由は？",
+      "difficulty": "Normal"
+    }
+  ]
+}
