@@ -19,7 +19,7 @@
 - エラー内容（無効キー、タイムアウト、HTTP ステータス）をログに残す。
 
 ## 4. OgiriEvaluator 実装
-- 「辛口の放送作家」プロンプトを構築し、`GeminiAPIManager` を通じてユーザーのお題＋回答を送信。
+- 「あなたは放送作家です」プロンプトを構築し、`GeminiAPIManager` を通じてユーザーのお題＋回答を送信。
 - 返ってきたレスポンスから `candidates[0].content.parts[0].text` を抽出するユーティリティを作成。
 - JSON を `score/comment` の DTO にパース。Newtonsoft ならクラス、JsonUtility ならラッパー。
 - 緊急時のデフォルト値（パース失敗時は `score=1` など）を定義して安定化。

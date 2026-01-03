@@ -1,4 +1,7 @@
 using System;
+using System.Threading;
+using System.Threading.Tasks;
+using OgiriDice.Evaluation;
 using OgiriDice.Data;
 using UnityEngine;
 
@@ -16,12 +19,47 @@ namespace OgiriDice.Game
         [SerializeField] private TopicDifficulty defaultDifficulty = TopicDifficulty.Normal;
         [SerializeField] private string defaultCategory = "こんな〇〇はイヤだ";
         [SerializeField] private TextAsset fallbackTextAsset;
+        [SerializeField] private OgiriEvaluator ogiriEvaluator;
 
         private TopicRepository repository;
         private Topic currentTopic;
         private System.Random random;
 
         public Topic CurrentTopic => currentTopic;
+
+        public bool HasEvaluator => ogiriEvaluator != null;
+
+        public async Task<EvaluationResult> EvaluateCurrentAnswerAsync(string answer, CancellationToken cancellationToken = default)
+        {
+            if (currentTopic == null)
+            {
+                Debug.LogWarning("GameManager: お題が選ばれていないので評価をスキップします。");
+                return new EvaluationResult(1, "お題がありません");
+            }
+
+            if (ogiriEvaluator == null)
+            {
+                Debug.LogWarning("GameManager: OgiriEvaluator が割り当てられていないため評価をスキップします。");
+                return new EvaluationResult(1, "評価器が設定されていません");
+            }
+
+            try
+            {
+                var result = await ogiriEvaluator.EvaluateAsync(currentTopic.Prompt, answer, cancellationToken);
+                Debug.Log($"GameManager: {currentTopic.Id} evaluated -> score={result.Score}, comment={result.Comment}");
+                return result;
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogWarning("GameManager: 評価処理がキャンセルされました。");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"GameManager: 評価に失敗しました ({ex.Message})");
+                return new EvaluationResult(1, "評価に失敗しました");
+            }
+        }
 
         private void Awake()
         {
