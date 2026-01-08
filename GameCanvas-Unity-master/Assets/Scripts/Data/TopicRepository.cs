@@ -44,7 +44,7 @@ namespace OgiriDice.Data
             }
 
             var container = JsonUtility.FromJson<TopicContainer>(json);
-            return new TopicRepository(container?.topics);
+            return new TopicRepository(container?.topics ?? Array.Empty<Topic>());
         }
 
         public static TopicRepository FromTextAsset(TextAsset asset)

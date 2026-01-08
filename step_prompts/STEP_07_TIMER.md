@@ -1,4 +1,19 @@
-# Step 7: Countdown timer
+# Step 7: タイマー機能
 
-Prompt:
-`CountdownTimer` を追加して15秒カウントダウン。時間切れは『空回答として扱い、0マス移動でターン終了』として `GameManager` に通知。既存 `InputPanelController` と連携してUI更新も反映。
+目的:
+- 15秒のカウントダウンを実装し、時間切れ時にターンを進行させる。
+
+前提:
+- 時間切れは「空回答」として扱い、0マス移動でターン終了。
+- `InputPanelController` と連携してUI更新。
+
+指示:
+- `CountdownTimer` コンポーネントを作成する。
+- 15秒でカウントダウンし、時間切れ時に `GameManager` に通知する。
+- `GameManager` 側で空回答として処理し、steps=0で移動完了扱いにする。
+
+出力:
+- タイマーの動作仕様
+
+完了条件:
+- 時間切れ時に0マス移動でターン終了できる。

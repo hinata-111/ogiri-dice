@@ -17,7 +17,7 @@ namespace OgiriDice.Evaluation
             "{ \"score\": 1~6の整数, \"comment\": \"短いツッコミ\" }";
 
         [Header("Gemini Settings")]
-        [SerializeField] private GeminiAPIManager geminiApiManager;
+        [SerializeField] private GeminiAPIManager geminiApiManager = null!;
         [SerializeField] private string fallbackComment = EvaluationResult.FailureComment;
 
         private void Awake()

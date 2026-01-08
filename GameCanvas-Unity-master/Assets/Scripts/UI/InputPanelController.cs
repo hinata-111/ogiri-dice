@@ -7,11 +7,11 @@ namespace OgiriDice.UI
 {
     public sealed class InputPanelController : MonoBehaviour
     {
-        [SerializeField] private CanvasGroup canvasGroup;
-        [SerializeField] private TMP_InputField answerInput;
-        [SerializeField] private Button submitButton;
+        [SerializeField] private CanvasGroup canvasGroup = null!;
+        [SerializeField] private TMP_InputField answerInput = null!;
+        [SerializeField] private Button submitButton = null!;
 
-        public event Action<string> OnSubmit;
+        public event Action<string> OnSubmit = delegate { };
 
         private void Awake()
         {

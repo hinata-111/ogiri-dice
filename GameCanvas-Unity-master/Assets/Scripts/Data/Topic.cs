@@ -9,9 +9,9 @@ namespace OgiriDice.Data
     [Serializable]
     public sealed class Topic
     {
-        [SerializeField] private string id;
-        [SerializeField] private string category;
-        [SerializeField] private string prompt;
+        [SerializeField] private string id = string.Empty;
+        [SerializeField] private string category = string.Empty;
+        [SerializeField] private string prompt = string.Empty;
         [SerializeField] private TopicDifficulty difficulty = TopicDifficulty.Normal;
 
         public string Id => id ?? string.Empty;

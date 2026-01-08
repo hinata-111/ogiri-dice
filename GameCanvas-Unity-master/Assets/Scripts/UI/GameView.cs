@@ -11,15 +11,18 @@ namespace OgiriDice.UI
     public class GameView : MonoBehaviour
     {
         [Header("Controller")]
-        [SerializeField] private GameManager gameManager;
+        [SerializeField] private GameManager gameManager = null!;
 
         [Header("Topic Display")]
-        [SerializeField] private TMP_Text topicText;
-        [SerializeField] private TMP_Text categoryText;
-        [SerializeField] private TMP_Text difficultyText;
+        [SerializeField] private TMP_Text topicText = null!;
+        [SerializeField] private TMP_Text categoryText = null!;
+        [SerializeField] private TMP_Text difficultyText = null!;
 
         [Header("Status Message")]
-        [SerializeField] private TMP_Text statusMessage;
+        [SerializeField] private TMP_Text statusMessage = null!;
+
+        [Header("Player Status")]
+        [SerializeField] private TMP_Text? playerStatusText;
 
         private void Awake()
         {
@@ -38,8 +41,13 @@ namespace OgiriDice.UI
 
             gameManager.OnTopicChanged += UpdateTopicDisplay;
             gameManager.OnStateChanged += UpdateStatus;
+            gameManager.OnPlayerUpdated += UpdatePlayerStatus;
             UpdateTopicDisplay(gameManager.CurrentTopic);
             UpdateStatus(gameManager.CurrentState);
+            if (gameManager.CurrentPlayer != null)
+            {
+                UpdatePlayerStatus(gameManager.CurrentPlayer);
+            }
         }
 
         private void OnDisable()
@@ -51,9 +59,10 @@ namespace OgiriDice.UI
 
             gameManager.OnTopicChanged -= UpdateTopicDisplay;
             gameManager.OnStateChanged -= UpdateStatus;
+            gameManager.OnPlayerUpdated -= UpdatePlayerStatus;
         }
 
-        private void UpdateTopicDisplay(Topic topic)
+        private void UpdateTopicDisplay(Topic? topic)
         {
             topicText.text = topic?.Prompt ?? "お題を取得しています…";
             categoryText.text = topic?.Category ?? "-";
@@ -74,6 +83,16 @@ namespace OgiriDice.UI
                 GameState.ShowingResult => "結果を確認して次へ",
                 _ => string.Empty
             };
+        }
+
+        private void UpdatePlayerStatus(Player player)
+        {
+            if (playerStatusText == null)
+            {
+                return;
+            }
+
+            playerStatusText.text = $"{player.Name}: {player.Money}円";
         }
     }
 }

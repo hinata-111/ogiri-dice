@@ -5,9 +5,9 @@ namespace OgiriDice.UI
 {
     public sealed class LoadingOverlayController : MonoBehaviour
     {
-        [SerializeField] private CanvasGroup canvasGroup;
-        [SerializeField] private TMP_Text loadingText;
-        [SerializeField] private Animator animator;
+        [SerializeField] private CanvasGroup canvasGroup = null!;
+        [SerializeField] private TMP_Text loadingText = null!;
+        [SerializeField] private Animator animator = null!;
 
         private const string DefaultMessage = "評価中…しばらくお待ちください";
         private const string EvaluatingTrigger = "TriggerEvaluating";

@@ -8,15 +8,15 @@ namespace OgiriDice.UI
 {
     public sealed class ResultPanelController : MonoBehaviour
     {
-        [SerializeField] private CanvasGroup canvasGroup;
-        [SerializeField] private TMP_Text scoreText;
-        [SerializeField] private TMP_Text commentText;
-        [SerializeField] private TMP_Text statusText;
-        [SerializeField] private Button nextButton;
-        [SerializeField] private Button retryButton;
+        [SerializeField] private CanvasGroup canvasGroup = null!;
+        [SerializeField] private TMP_Text scoreText = null!;
+        [SerializeField] private TMP_Text commentText = null!;
+        [SerializeField] private TMP_Text statusText = null!;
+        [SerializeField] private Button nextButton = null!;
+        [SerializeField] private Button retryButton = null!;
 
-        public event Action OnNext;
-        public event Action OnRetry;
+        public event Action OnNext = delegate { };
+        public event Action OnRetry = delegate { };
 
         private void Awake()
         {

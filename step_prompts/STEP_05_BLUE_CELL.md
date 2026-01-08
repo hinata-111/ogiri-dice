@@ -1,4 +1,26 @@
-# Step 5: Blue cell event
+# Step 5: 青マスのイベント
 
-Prompt:
-`OnLandOnCell(cell, player)` を作り、青マスは `EvaluationResult.Score × 100円` を加算する処理を入れる。UIは既存の `GameView`/`ResultPanelController` を拡張して所持金を表示。
+目的:
+- 青マスに止まった時の報酬処理を実装する。
+
+前提:
+- スコアは `EvaluationResult.Score` を使用する。
+- 加算額は `score × 100円`。
+
+指示:
+- `OnLandOnCell(cell, player)` を作成する。
+- `cell.type == Blue` の場合、所持金に `score × 100` を加算する。
+- **所持金増加後、100万円到達チェックを追加**：
+  - `player.money >= 1000000` の場合、ゲーム終了フラグを立てる
+  - Debug.Logで「{Player名}が100万円到達！ゲーム終了」を出力
+  - ゲーム終了処理を呼ぶ（Step 8で実装）
+- UI更新は既存 `GameView`/`ResultPanelController` を拡張して反映する。
+
+出力:
+- 青マス処理の説明
+- 100万円到達チェックの実装
+- UI更新の反映箇所
+
+完了条件:
+- 青マス停止時に所持金が正しく増加し、UIに反映される。
+- 所持金が100万円に到達した場合、ゲーム終了処理が呼ばれる。

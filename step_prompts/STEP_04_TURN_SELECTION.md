@@ -1,4 +1,28 @@
-# Step 4: Player count selection and turn manager (1-6 players)
+# Step 4: プレイヤー人数選択＆ターン管理（1〜6人）
 
-Prompt:
-ゲーム開始前にプレイヤー人数（1〜6人）を選べる仕組みを追加。選択人数ぶん `Player` を生成し `TurnManager` で管理。既存 `GameManager` の評価完了後に `BoardManager` へ steps を渡し、移動→イベント処理→ターン切替の順で実行する流れを組み込む。
+⚠️ **このファイルは非推奨です。STEP_04a と STEP_04b に分割されました。**
+- STEP_04a: TurnManager実装
+- STEP_04b: プレイヤー人数選択UI
+
+---
+
+目的:
+- ゲーム開始前にプレイヤー人数を選び、ターン制御を確立する。
+
+前提:
+- 1〜6人を選択可能にする。
+- `GameManager` の評価完了後に「移動→イベント→ターン切替」を実行する。
+
+指示:
+- プレイヤー人数選択の入力口（UI or Inspector設定）を追加する。
+- 選択人数ぶん `Player` を生成し、`TurnManager` で管理する。
+- `TurnManager` は現在プレイヤーと `NextTurn()` を持つ。
+- `GameManager` の評価完了後に `BoardManager` へ steps を渡す。
+- 移動完了後にイベント処理を実行し、最後にターンを切り替える。
+
+出力:
+- 1ターンのフロー図（テキストで可）
+- `TurnManager` の責務
+
+完了条件:
+- プレイヤー人数が1〜6人で切り替わり、ターンが順番に回る。

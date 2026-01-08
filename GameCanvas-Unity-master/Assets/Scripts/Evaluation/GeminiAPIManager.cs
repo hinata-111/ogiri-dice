@@ -11,7 +11,7 @@ namespace OgiriDice.Evaluation
     public sealed class GeminiAPIManager : ScriptableObject
     {
         [Header("Credentials")]
-        [SerializeField] private string apiKey;
+        [SerializeField] private string apiKey = string.Empty;
 
         [Header("Models")]
         [SerializeField] private string primaryModel = "gemini-1.5-pro";
@@ -157,26 +157,26 @@ namespace OgiriDice.Evaluation
         [Serializable]
         private sealed class RequestPayload
         {
-            public RequestContent[] contents;
-            public GenerationConfig generationConfig;
+            public RequestContent[] contents = Array.Empty<RequestContent>();
+            public GenerationConfig generationConfig = new GenerationConfig();
         }
 
         [Serializable]
         private sealed class RequestContent
         {
-            public RequestPart[] parts;
+            public RequestPart[] parts = Array.Empty<RequestPart>();
         }
 
         [Serializable]
         private sealed class RequestPart
         {
-            public string text;
+            public string text = string.Empty;
         }
 
         [Serializable]
         private sealed class GenerationConfig
         {
-            public string responseMimeType;
+            public string responseMimeType = "application/json";
         }
 
         private readonly struct RequestResult

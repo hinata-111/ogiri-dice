@@ -1,0 +1,498 @@
+{
+  "cells": [
+    {
+      "id": "c00",
+      "index": 0,
+      "type": "Normal",
+      "label": "高円寺(座・高円寺)"
+    },
+    {
+      "id": "c01",
+      "index": 1,
+      "type": "Red",
+      "label": "赤マス"
+    },
+    {
+      "id": "c02",
+      "index": 2,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c03",
+      "index": 3,
+      "type": "Normal",
+      "label": "中野(芸能小劇場)"
+    },
+    {
+      "id": "c04",
+      "index": 4,
+      "type": "Red",
+      "label": "赤マス"
+    },
+    {
+      "id": "c05",
+      "index": 5,
+      "type": "Normal",
+      "label": "新宿(START)"
+    },
+    {
+      "id": "c06",
+      "index": 6,
+      "type": "Red",
+      "label": "赤マス"
+    },
+    {
+      "id": "c07",
+      "index": 7,
+      "type": "Normal",
+      "label": "神保町(漫才)"
+    },
+    {
+      "id": "c08",
+      "index": 8,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c09",
+      "index": 9,
+      "type": "Blue",
+      "label": "青マス"
+    },
+    {
+      "id": "c10",
+      "index": 10,
+      "type": "Normal",
+      "label": "汐留(日テレ)"
+    },
+    {
+      "id": "c11",
+      "index": 11,
+      "type": "Red",
+      "label": "赤マス"
+    },
+    {
+      "id": "c12",
+      "index": 12,
+      "type": "Normal",
+      "label": "お台場(フジ)"
+    },
+    {
+      "id": "c13",
+      "index": 13,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c14",
+      "index": 14,
+      "type": "Normal",
+      "label": "六本木(テレ朝/TBS)"
+    },
+    {
+      "id": "c15",
+      "index": 15,
+      "type": "Red",
+      "label": "赤マス"
+    },
+    {
+      "id": "c16",
+      "index": 16,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c17",
+      "index": 17,
+      "type": "Normal",
+      "label": "品川"
+    },
+    {
+      "id": "c18",
+      "index": 18,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c19",
+      "index": 19,
+      "type": "Blue",
+      "label": "青マス"
+    },
+    {
+      "id": "c20",
+      "index": 20,
+      "type": "Normal",
+      "label": "渋谷"
+    },
+    {
+      "id": "c21",
+      "index": 21,
+      "type": "Blue",
+      "label": "青マス"
+    },
+    {
+      "id": "c22",
+      "index": 22,
+      "type": "Normal",
+      "label": "下北沢(本多)"
+    },
+    {
+      "id": "c23",
+      "index": 23,
+      "type": "Blue",
+      "label": "青マス"
+    },
+    {
+      "id": "c24",
+      "index": 24,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c25",
+      "index": 25,
+      "type": "Normal",
+      "label": "池袋(演芸場)"
+    },
+    {
+      "id": "c26",
+      "index": 26,
+      "type": "Blue",
+      "label": "青マス"
+    },
+    {
+      "id": "c27",
+      "index": 27,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c28",
+      "index": 28,
+      "type": "Red",
+      "label": "赤マス"
+    },
+    {
+      "id": "c29",
+      "index": 29,
+      "type": "Normal",
+      "label": "浅草(演芸ホール)"
+    },
+    {
+      "id": "c30",
+      "index": 30,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c31",
+      "index": 31,
+      "type": "Blue",
+      "label": "青マス"
+    },
+    {
+      "id": "c32",
+      "index": 32,
+      "type": "Normal",
+      "label": "秋葉原"
+    },
+    {
+      "id": "c33",
+      "index": 33,
+      "type": "Normal",
+      "label": "白マス"
+    },
+    {
+      "id": "c34",
+      "index": 34,
+      "type": "Normal",
+      "label": "有楽町"
+    },
+    {
+      "id": "c35",
+      "index": 35,
+      "type": "Normal",
+      "label": "白マス"
+    }
+  ],
+  "edges": [
+    {
+      "from": "c00",
+      "to": [
+        "c01",
+        "c35"
+      ]
+    },
+    {
+      "from": "c01",
+      "to": [
+        "c00",
+        "c02"
+      ]
+    },
+    {
+      "from": "c02",
+      "to": [
+        "c01",
+        "c03"
+      ]
+    },
+    {
+      "from": "c03",
+      "to": [
+        "c02",
+        "c04"
+      ]
+    },
+    {
+      "from": "c04",
+      "to": [
+        "c03",
+        "c05"
+      ]
+    },
+    {
+      "from": "c05",
+      "to": [
+        "c04",
+        "c06",
+        "c07"
+      ]
+    },
+    {
+      "from": "c06",
+      "to": [
+        "c05",
+        "c14"
+      ]
+    },
+    {
+      "from": "c07",
+      "to": [
+        "c05",
+        "c08"
+      ]
+    },
+    {
+      "from": "c08",
+      "to": [
+        "c07",
+        "c09"
+      ]
+    },
+    {
+      "from": "c09",
+      "to": [
+        "c08",
+        "c10"
+      ]
+    },
+    {
+      "from": "c10",
+      "to": [
+        "c09",
+        "c11"
+      ]
+    },
+    {
+      "from": "c11",
+      "to": [
+        "c10",
+        "c12"
+      ]
+    },
+    {
+      "from": "c12",
+      "to": [
+        "c11",
+        "c13"
+      ]
+    },
+    {
+      "from": "c13",
+      "to": [
+        "c12",
+        "c14"
+      ]
+    },
+    {
+      "from": "c14",
+      "to": [
+        "c06",
+        "c13",
+        "c15",
+        "c16"
+      ]
+    },
+    {
+      "from": "c15",
+      "to": [
+        "c14",
+        "c16"
+      ]
+    },
+    {
+      "from": "c16",
+      "to": [
+        "c14",
+        "c15",
+        "c17"
+      ]
+    },
+    {
+      "from": "c17",
+      "to": [
+        "c16",
+        "c18"
+      ]
+    },
+    {
+      "from": "c18",
+      "to": [
+        "c17",
+        "c19"
+      ]
+    },
+    {
+      "from": "c19",
+      "to": [
+        "c18",
+        "c20"
+      ]
+    },
+    {
+      "from": "c20",
+      "to": [
+        "c19",
+        "c21",
+        "c22"
+      ]
+    },
+    {
+      "from": "c21",
+      "to": [
+        "c20",
+        "c22"
+      ]
+    },
+    {
+      "from": "c22",
+      "to": [
+        "c20",
+        "c21",
+        "c23"
+      ]
+    },
+    {
+      "from": "c23",
+      "to": [
+        "c22",
+        "c24"
+      ]
+    },
+    {
+      "from": "c24",
+      "to": [
+        "c23",
+        "c25"
+      ]
+    },
+    {
+      "from": "c25",
+      "to": [
+        "c24",
+        "c26"
+      ]
+    },
+    {
+      "from": "c26",
+      "to": [
+        "c25",
+        "c27"
+      ]
+    },
+    {
+      "from": "c27",
+      "to": [
+        "c26",
+        "c28"
+      ]
+    },
+    {
+      "from": "c28",
+      "to": [
+        "c27",
+        "c29"
+      ]
+    },
+    {
+      "from": "c29",
+      "to": [
+        "c28",
+        "c30"
+      ]
+    },
+    {
+      "from": "c30",
+      "to": [
+        "c29",
+        "c31"
+      ]
+    },
+    {
+      "from": "c31",
+      "to": [
+        "c30",
+        "c32"
+      ]
+    },
+    {
+      "from": "c32",
+      "to": [
+        "c31",
+        "c33"
+      ]
+    },
+    {
+      "from": "c33",
+      "to": [
+        "c32",
+        "c34"
+      ]
+    },
+    {
+      "from": "c34",
+      "to": [
+        "c33",
+        "c35"
+      ]
+    },
+    {
+      "from": "c35",
+      "to": [
+        "c34",
+        "c00"
+      ]
+    }
+  ],
+  "startCellId": "c05",
+  "goalCellId": "c00",
+  "goalCandidates": [
+    "c00",
+    "c03",
+    "c05",
+    "c07",
+    "c10",
+    "c12",
+    "c14",
+    "c17",
+    "c20",
+    "c22",
+    "c25",
+    "c29",
+    "c32",
+    "c34"
+  ]
+}
