@@ -18,7 +18,7 @@ namespace OgiriDice.Evaluation
 
         [Header("Gemini Settings")]
         [SerializeField] private GeminiAPIManager geminiApiManager;
-        [SerializeField] private string fallbackComment = "評価に失敗しました";
+        [SerializeField] private string fallbackComment = EvaluationResult.FailureComment;
 
         private void Awake()
         {

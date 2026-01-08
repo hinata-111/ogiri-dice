@@ -67,7 +67,7 @@ namespace OgiriDice.Data
             return new TopicRepository(store.Topics);
         }
 
-        public Topic[] GetTopics(string category = null, TopicDifficulty? difficulty = null)
+        public Topic[] GetTopics(string? category = null, TopicDifficulty? difficulty = null)
         {
             var query = topics.AsEnumerable();
             if (!string.IsNullOrWhiteSpace(category))
@@ -83,7 +83,7 @@ namespace OgiriDice.Data
             return query.ToArray();
         }
 
-        public Topic GetRandomTopic(string category = null, TopicDifficulty? difficulty = null, System.Random random = null)
+        public Topic? GetRandomTopic(string? category = null, TopicDifficulty? difficulty = null, System.Random? random = null)
         {
             var pool = GetTopics(category, difficulty);
             if (pool.Length == 0)
@@ -95,7 +95,7 @@ namespace OgiriDice.Data
             return pool[random.Next(pool.Length)];
         }
 
-        public bool TryPickNextTopic(out Topic result, string category = null, TopicDifficulty? difficulty = null, System.Random random = null)
+        public bool TryPickNextTopic(out Topic? result, string? category = null, TopicDifficulty? difficulty = null, System.Random? random = null)
         {
             result = GetRandomTopic(category, difficulty, random);
             return result != null;

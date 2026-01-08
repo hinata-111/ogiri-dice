@@ -9,6 +9,8 @@ namespace OgiriDice.Evaluation
     /// </summary>
     public sealed class EvaluationResult
     {
+        public const string FailureComment = "評価失敗";
+
         public int Score { get; }
         public string Comment { get; }
 

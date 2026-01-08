@@ -1,5 +1,7 @@
 using System;
 using System.Linq;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 namespace OgiriDice.Evaluation
@@ -9,7 +11,7 @@ namespace OgiriDice.Evaluation
     /// </summary>
     public static class EvaluationResponseParser
     {
-        private const string DefaultComment = "評価できませんでした";
+        private const string DefaultComment = EvaluationResult.FailureComment;
 
         public static EvaluationResult Parse(string json)
         {
@@ -20,64 +22,57 @@ namespace OgiriDice.Evaluation
 
             try
             {
-                var response = JsonUtility.FromJson<EvaluationResponse>(json);
-                var partText = response?.candidates?
-                    .Select(c => c?.content)
-                    .Where(c => c != null)
-                    .SelectMany(c => c.parts ?? Array.Empty<ResponsePart>())
-                    .FirstOrDefault()?.text;
-
+                var partText = ExtractCandidateText(json);
                 if (string.IsNullOrWhiteSpace(partText))
                 {
                     return new EvaluationResult(1, DefaultComment);
                 }
 
-                var dto = JsonUtility.FromJson<EvaluationResultDto>(partText);
+                var dto = JsonConvert.DeserializeObject<EvaluationResultDto>(partText);
                 if (dto == null)
                 {
                     return new EvaluationResult(1, DefaultComment);
                 }
 
-                var score = Mathf.Clamp(dto.score, 1, 6);
-                var comment = string.IsNullOrWhiteSpace(dto.comment) ? DefaultComment : dto.comment.Trim();
+                var score = Mathf.Clamp(dto.Score, 1, 6);
+                var comment = string.IsNullOrWhiteSpace(dto.Comment) ? DefaultComment : dto.Comment.Trim();
                 return new EvaluationResult(score, comment);
+            }
+            catch (JsonException ex)
+            {
+                Debug.LogWarning($"EvaluationResponseParser: JSON parsing failed ({ex.Message})");
+                return new EvaluationResult(1, DefaultComment);
             }
             catch (Exception ex)
             {
-                Debug.LogWarning($"EvaluationResponseParser: failed to parse JSON ({ex.Message})");
+                Debug.LogWarning($"EvaluationResponseParser: unexpected error ({ex.Message})");
                 return new EvaluationResult(1, DefaultComment);
             }
         }
 
-        [Serializable]
-        private sealed class EvaluationResponse
+        private static string? ExtractCandidateText(string json)
         {
-            public Candidate[] candidates;
+            var document = JObject.Parse(json);
+            var candidates = document["candidates"] as JArray;
+            var firstContent = candidates?
+                .First?
+                ["content"]?["parts"] as JArray;
+
+            if (firstContent == null || firstContent.Count == 0)
+            {
+                return null;
+            }
+
+            return firstContent[0]?["text"]?.ToString();
         }
 
-        [Serializable]
-        private sealed class Candidate
-        {
-            public CandidateContent content;
-        }
-
-        [Serializable]
-        private sealed class CandidateContent
-        {
-            public ResponsePart[] parts;
-        }
-
-        [Serializable]
-        private sealed class ResponsePart
-        {
-            public string text;
-        }
-
-        [Serializable]
         private sealed class EvaluationResultDto
         {
-            public int score;
-            public string comment;
+            [JsonProperty("score")]
+            public int Score { get; set; }
+
+            [JsonProperty("comment")]
+            public string? Comment { get; set; }
         }
     }
 }
