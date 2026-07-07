@@ -20,10 +20,13 @@ const MOCK_CPU_ANSWERS = [
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 export class MockEvaluator implements Evaluator {
-  constructor(
-    private delayMs = 1200,
-    private random: () => number = Math.random,
-  ) {}
+  private delayMs: number;
+  private random: () => number;
+
+  constructor(delayMs = 1200, random: () => number = Math.random) {
+    this.delayMs = delayMs;
+    this.random = random;
+  }
 
   async evaluate(_topicPrompt: string, _answer: string): Promise<EvaluationResult> {
     await delay(this.delayMs);
