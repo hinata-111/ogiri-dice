@@ -49,3 +49,17 @@ export interface BestAnswer {
   score: number;
   comment: string;
 }
+
+// --- v2: 東京マップ ---
+export type NodeKind = "theater" | "tv" | "station" | "stop";
+export type CellKind = "normal" | "blue" | "red";
+
+export interface MapNode {
+  id: string;
+  name: string; // 中間マスは""
+  kind: NodeKind;
+  cell: CellKind; // 拠点はnormal
+  x: number;
+  y: number;
+  neighbors: string[];
+}
