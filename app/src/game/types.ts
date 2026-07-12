@@ -31,9 +31,9 @@ export interface Player {
   name: string;
   kind: PlayerKind;
   personality?: CpuPersonality;
-  position: number; // 現在マスindex
+  position: string; // 現在ノードid
   money: number;
-  goalOrder: number | null; // ゴール到達順(0始まり)。未到達はnull
+  arrivals: number; // 目的地到着回数
 }
 
 export interface EvaluationResult {

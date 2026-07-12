@@ -321,8 +321,8 @@
       "name": "",
       "kind": "stop",
       "cell": "normal",
-      "x": 856,
-      "y": 440,
+      "x": 784,
+      "y": 400,
       "neighbors": [
         "jimbocho",
         "j1"

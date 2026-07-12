@@ -1,19 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { answerPrize, applyMoney, goalPrize, rankPlayers } from "./rules";
+import { applyMoney, blueGain, CHALLENGE_UNIT, rankPlayers, redLoss } from "./rules";
 import type { Player } from "./types";
 
-const p = (id: number, money: number): Player => ({
-  id, name: `P${id}`, kind: "human", position: 0, money, goalOrder: null,
+const p = (id: number, money: number, arrivals = 0): Player => ({
+  id, name: `P${id}`, kind: "human", position: "start", money, arrivals,
 });
 
-describe("answerPrize", () => {
-  it("スコア×2万円", () => expect(answerPrize(4)).toBe(80000));
+describe("blueGain", () => {
+  it("スコア×3万", () => expect(blueGain(4)).toBe(4 * CHALLENGE_UNIT));
 });
 
-describe("goalPrize", () => {
-  it("1着30万", () => expect(goalPrize(0)).toBe(300000));
-  it("4着5万", () => expect(goalPrize(3)).toBe(50000));
-  it("5着以降も5万", () => expect(goalPrize(4)).toBe(50000));
+describe("redLoss", () => {
+  it("未達分×3万", () => expect(redLoss(4, 1)).toBe(3 * CHALLENGE_UNIT));
+  it("達成なら0", () => expect(redLoss(2, 5)).toBe(0));
 });
 
 describe("applyMoney", () => {
@@ -22,13 +21,8 @@ describe("applyMoney", () => {
 });
 
 describe("rankPlayers", () => {
-  it("所持金降順", () => {
-    const ranked = rankPlayers([p(1, 100), p(2, 300), p(3, 200)]);
-    expect(ranked.map((x) => x.id)).toEqual([2, 3, 1]);
-  });
-  it("元配列を破壊しない", () => {
-    const arr = [p(1, 100), p(2, 300)];
-    rankPlayers(arr);
-    expect(arr[0].id).toBe(1);
+  it("所持金降順・同額は到着数降順", () => {
+    const ranked = rankPlayers([p(1, 100, 0), p(2, 300), p(3, 300, 2)]);
+    expect(ranked.map((x) => x.id)).toEqual([3, 2, 1]);
   });
 });

@@ -34,7 +34,7 @@ const routes = [
   ["shibuya", "roppongi", [["B", 1, 8], ["R", 2, 9]]],
   ["ikebukuro", "jimbocho", [["B", 4, 1], ["N", 4, 2]]],
   ["jimbocho", "shiodome", [["B", 4, 4]]],
-  ["jimbocho", "j1", [["N", 6, 3]]],
+  ["jimbocho", "j1", [["N", 5, 3]]],
   ["j1", "asakusa", [["R", 7, 2], ["N", 8, 1]]],
   ["j1", "akihabara", [["N", 7, 4]]],
   ["shiodome", "akihabara", [["N", 6, 5]]],

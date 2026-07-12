@@ -6,11 +6,11 @@ import type { MapNode } from "./types";
 const nodes = (mapData as { nodes: MapNode[] }).nodes;
 
 describe("東京マップデータ", () => {
-  it("35ノード・双方向整合(buildNodeMapが通る)", () => {
+  it("36ノード・双方向整合(buildNodeMapが通る)", () => {
     const m = buildNodeMap(nodes);
     expect(m.size).toBe(36);
   });
-  it("目的地候補は劇場11+テレビ局3の12件", () => {
+  it("目的地候補は劇場9+テレビ局3の12件", () => {
     // theater: 高円寺/中野/新宿/渋谷/下北沢/池袋/神保町/浅草/有楽町 = 9, tv: 汐留/お台場/六本木 = 3
     expect(destinationCandidates(nodes)).toHaveLength(12);
   });

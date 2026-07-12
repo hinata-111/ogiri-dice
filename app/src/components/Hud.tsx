@@ -13,7 +13,7 @@ export function Hud({ players, currentPlayerIndex }: Props) {
       {players.map((p, i) => (
         <span key={p.id} className={`hud-player${i === currentPlayerIndex ? " current" : ""}`}>
           {p.kind === "cpu" ? "🤖" : "😀"} {p.name}: {fmt(p.money)}
-          {p.goalOrder !== null && " 🏁"}
+          {p.arrivals > 0 && ` 🏁×${p.arrivals}`}
         </span>
       ))}
     </div>
