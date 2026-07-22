@@ -14,7 +14,8 @@ import {
 } from "./ui/constants";
 import { TitleScreen } from "./components/TitleScreen";
 import { SetupScreen } from "./components/SetupScreen";
-import { IsoMapView } from "./components/IsoMapView";
+import { IsoMapView } from "./components/map/IsoMapView";
+import type { CameraMode } from "./components/map/camera";
 import { Hud } from "./components/Hud";
 import { TopicCard } from "./components/TopicCard";
 import { AnswerInput } from "./components/AnswerInput";
@@ -126,6 +127,11 @@ export default function App() {
 
   const inGame = !["title", "setup"].includes(phase.name);
   const destination = state.destinationId ? (nodeMap.get(state.destinationId) ?? null) : null;
+  const mapCameraMode: CameraMode =
+    phase.name === "moving" ? "moving"
+    : phase.name === "arrival" ? "reveal"
+    : "follow";
+  const mapFocusNodeId = phase.name === "arrival" ? phase.nodeId : (player?.position ?? null);
 
   const stateClass =
     phase.name === "evaluating" ? " state-evaluating"
@@ -141,6 +147,9 @@ export default function App() {
             players={state.players}
             currentPlayerIndex={state.currentPlayerIndex}
             destinationId={state.destinationId}
+            cameraMode={mapCameraMode}
+            focusNodeId={mapFocusNodeId}
+            canToggleOverview={phase.name === "moving"}
           />
           <Hud
             players={state.players}

@@ -24,10 +24,25 @@ body {
 .stage { position: relative; width: 100%; height: 100%; }
 
 /* --- 盤面 --- */
-.board-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.board-camera { transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-.cell-label { font-size: 20px; fill: rgba(255,255,255,0.85); text-anchor: middle; }
-.piece { transition: transform 0.26s ease-in-out; }
+.board-svg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  background: #f4e7c9;
+}
+.board-camera {
+  transform-origin: 0 0;
+  transform-box: fill-box;
+  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.piece {
+  transition: transform 0.26s cubic-bezier(0.18, 1.3, 0.38, 1);
+  pointer-events: none;
+}
+.piece circle:first-of-type { animation: piece-hop 0.52s ease-in-out; }
+@keyframes piece-hop {
+  0%, 100% { transform: translateY(0); }
+  45% { transform: translateY(-8px); }
+}
 
 /* --- オーバーレイ共通 --- */
 .overlay {
@@ -153,11 +168,88 @@ button.ghost {
 
 h1.logo { font-size: 44px; color: var(--accent); text-shadow: 0 4px 0 var(--accent2); }
 
-/* --- v2: アイソメ盤 --- */
-.iso-node-label { font-size: 15px; font-weight: 700; fill: #fff; text-anchor: middle;
-  paint-order: stroke; stroke: rgba(0,0,0,0.6); stroke-width: 3px; }
-.iso-tile { stroke: rgba(255,255,255,0.35); stroke-width: 1.5; }
-.destination-flag { animation: flag-bounce 1s ease-in-out infinite; }
+/* --- v2: 東京マップ --- */
+.terrain-bay {
+  fill: #94d7fb;
+  stroke: #5aaedb;
+  stroke-width: 3;
+}
+.terrain-island {
+  fill: #f3e4c1;
+  stroke: #79b86c;
+  stroke-width: 6;
+}
+.terrain-river {
+  fill: none;
+  stroke: #81cdf2;
+  stroke-width: 30;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.terrain-moat { opacity: 0.9; }
+.terrain-green { opacity: 0.95; }
+.terrain-tree {
+  stroke: rgba(65, 112, 55, 0.35);
+  stroke-width: 1.2;
+}
+.terrain-wave {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.78);
+  stroke-width: 5;
+  stroke-linecap: round;
+}
+.terrain-water-label {
+  fill: rgba(33, 105, 149, 0.45);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+.road-shadow { fill: rgba(72, 47, 20, 0.16); transform: translateY(5px); }
+.road-band { fill: #fff8ec; stroke: #b08d57; stroke-width: 2; }
+.road-highlight { fill: rgba(255, 255, 255, 0.55); }
+.tile-shadow { fill: rgba(61, 38, 12, 0.26); }
+.tile-top { paint-order: stroke; }
+.tile-normal { filter: drop-shadow(0 1px 0 rgba(112, 85, 42, 0.28)); }
+.map-building { filter: drop-shadow(0 5px 3px rgba(71, 50, 18, 0.22)); }
+.building-theater,
+.building-tv,
+.building-station { pointer-events: none; }
+.name-plate rect {
+  fill: rgba(255, 255, 255, 0.94);
+  stroke: #a7834b;
+  stroke-width: 1.5;
+}
+.name-plate text {
+  text-anchor: middle;
+  font-size: 15px;
+  font-weight: 800;
+  fill: #3b2a14;
+  letter-spacing: 0;
+}
+.map-overview-toggle {
+  position: absolute;
+  right: 16px;
+  bottom: 92px;
+  z-index: 24;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 2px solid #b08d57;
+  background: #fff8ec;
+  color: #38260f;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(53, 35, 11, 0.22);
+  cursor: pointer;
+}
+.map-overview-toggle.active {
+  background: #2f7de1;
+  border-color: #ffffff;
+  color: #ffffff;
+}
+.destination-flag {
+  animation: flag-bounce 1s ease-in-out infinite;
+  pointer-events: none;
+}
 @keyframes flag-bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
 /* --- 移動UI --- */
