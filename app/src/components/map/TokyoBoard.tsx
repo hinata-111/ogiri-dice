@@ -7,11 +7,13 @@ import { ARRIVAL_PRIZE, MAX_ROUNDS, rankPlayers, WIN_MONEY } from '../../game/ru
 import './tokyo-board.css';
 import { buildArtLayout } from './art-layout';
 import { placeChoices } from './choice-layout';
+import { PlayerToken } from '../../presentation/StageArt';
+import { playerColors } from '../../presentation/palette';
 
-const colors=['#1679bb','#bb405d','#378454','#895ac1'];
+const colors=playerColors;
 const cellNames={normal:'通常マス',blue:'賞金チャレンジ',red:'減額回避チャレンジ'};
 
-export function TokyoBoard({state,onStep}:{state:GameState;onStep:(id:string)=>void}) {
+export function TokyoBoard({state,onStep,canAct=true}:{state:GameState;onStep:(id:string)=>void;canAct?:boolean}) {
   const root=useRef<HTMLDivElement>(null);
   const boardId=useId();
   const overviewArea=useRef<HTMLDivElement>(null);
@@ -32,7 +34,7 @@ export function TokyoBoard({state,onStep}:{state:GameState;onStep:(id:string)=>v
   useLayoutEffect(()=>{const node=root.current;if(!node)return;const observer=new ResizeObserver(()=>setSize({width:node.clientWidth,height:node.clientHeight}));observer.observe(node);return()=>observer.disconnect()},[]);
   const distance=(from:string,to:string)=>{const queue:[string,number][]=[[from,0]],seen=new Set([from]);for(let i=0;i<queue.length;i++){const [id,d]=queue[i];if(id===to)return d;for(const next of graph.get(id)!.neighbors)if(!seen.has(next)){seen.add(next);queue.push([next,d+1])}}return 0};
   const describe=(id:string)=>graph.get(id)!.name||cellNames[graph.get(id)!.cell];
-  const options=phase.name==='moving'&&player.kind==='human'?moveOptions(graph,player.position,phase.cameFrom):[];
+  const options=phase.name==='moving'&&player.kind==='human'&&canAct?moveOptions(graph,player.position,phase.cameFrom):[];
   const selected=selection?.from===player.position&&options.includes(selection.id)?selection.id:null;
   const overview=view==='overview';
   const narrow=size.width<=600&&size.height>=500;
@@ -64,16 +66,16 @@ export function TokyoBoard({state,onStep}:{state:GameState;onStep:(id:string)=>v
     <div inert={standings&&phase.name==='moving'}>
     <div className={overview?"overview-scroll":"map-viewport"} ref={overviewArea} tabIndex={overview?0:undefined} aria-label={overview?"東京全体地図。上下左右にスクロールできます":undefined}>
     <div className="tokyo-camera" style={{width,height,transform:`translate(${x}px,${y}px)`}}>
-      <img className="tokyo-art" src={`${import.meta.env.BASE_URL}art/tokyo-board.png`} alt="東京の街並み、公園、寺社と湾岸を描いたすごろくマップ"/>
+      <img className="tokyo-art" src={`${import.meta.env.BASE_URL}art/tokyo-board-console.png`} alt="東京の街並み、公園、寺社と湾岸を描いたすごろくマップ"/>
       <svg className="tokyo-routes" viewBox="0 0 1000 562.5" aria-hidden="true">
         <defs>{layout.crossings.map((crossing,i)=><mask key={i} id={`${boardId}-crossing-${i}`} maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="562.5"><rect width="1000" height="562.5" fill="white"/><circle cx={crossing.x} cy={crossing.y} r="7" fill="black"/></mask>)}</defs>
         {state.nodes.flatMap(n=>n.neighbors.filter(id=>n.id<id).map(id=>{const crossing=layout.crossings.findIndex(c=>c.under===`${n.id}:${id}`);return <path key={`${n.id}:${id}`} mask={crossing>=0?`url(#${boardId}-crossing-${crossing})`:undefined} className={`tokyo-track ${selected&&((n.id===player.position&&id===selected)||(id===player.position&&n.id===selected))?'selected':''}`} d={layout.path(n.id,id)}/>}))}
-        {state.nodes.map(n=>{const p=points.get(n.id)!;return <g key={n.id}><circle cx={p[0]*10} cy={p[1]*5.625} r={n.name?7:n.cell==='normal'?5:6.5} className={`tokyo-cell ${n.cell} ${n.name?'hub':''}`}/>{n.cell!=='normal'&&<text className="tokyo-cell-symbol" x={p[0]*10} y={p[1]*5.625}>{n.cell==='blue'?'+':'!'}</text>}</g>})}
+        {state.nodes.map(n=>{const p=points.get(n.id)!,w=n.name?21:17;return <g key={n.id} transform={`translate(${p[0]*10} ${p[1]*5.625})`}><g transform="rotate(-20)"><rect className="tokyo-cell-base" x={-w/2} y={-5} width={w} height={13} rx="2"/><rect x={-w/2} y={-8} width={w} height={13} rx="2" className={`tokyo-cell ${n.cell} ${n.name?'hub':''}`}/></g>{n.cell!=='normal'&&<text className="tokyo-cell-symbol" x="0" y="-1">{n.cell==='blue'?'+':'!'}</text>}</g>})}
         {view==='current'&&choices.map(c=><path key={`guide-${c.id}`} d={`M${c.cx*10} ${c.cy*5.625}L${c.bx*10} ${c.by*5.625}`} fill="none" stroke="#174c6b" strokeWidth="2" strokeDasharray="3 3"/>)}
       </svg>
       {state.nodes.filter(n=>n.name&&(!overview||!overviewFit||n.id===state.destinationId||n.id===player.position)).map(n=>{const p=points.get(n.id)!;return <span key={n.id} className={`tokyo-label ${n.id===state.destinationId?'goal':''}`} style={{left:`${p[0]}%`,top:`${p[1]}%`,transform:state.players.filter(player=>player.position===n.id).length>1?'translate(-50%,24px)':undefined}}>{n.id===state.destinationId?'⚑ ':''}{n.name}</span>})}
       {overview&&<span className="overview-current" style={{left:`${px}%`,top:`${py}%`}}>現在地</span>}
-      {state.players.filter((p,i,all)=>!overview||all.findIndex(v=>v.position===p.position)===i).map(p=>{const pos=points.get(p.position)!,group=state.players.filter(v=>v.position===p.position),slot=group.findIndex(v=>v.id===p.id),offset=group.length>1?[[-19,-12],[19,-12],[-19,18],[19,18]][slot]:[0,0];return <div key={p.id} role="img" aria-label={`${p.name}：${describe(p.position)}${p.id===player.id?'、現在の手番':''}`} className={`tokyo-pawn ${group.length>1?'shared':''}`} style={{left:`${pos[0]}%`,top:`${pos[1]}%`,'--pawn-color':colors[p.id%4],'--ox':`${offset[0]}px`,'--oy':`${offset[1]}px`} as CSSProperties}><span>{overview&&group.length>1?`${group.length}人`:p.id+1}</span></div>})}
+      {state.players.filter((p,i,all)=>!overview||all.findIndex(v=>v.position===p.position)===i).map(p=>{const pos=points.get(p.position)!,group=state.players.filter(v=>v.position===p.position),slot=group.findIndex(v=>v.id===p.id),offset=group.length>1?[[-19,-12],[19,-12],[-19,18],[19,18]][slot]:[0,0];return <div key={p.id} role="img" aria-label={`${p.name}：${describe(p.position)}${p.id===player.id?'、現在の手番':''}`} className={`tokyo-pawn ${group.length>1?'shared':''}`} style={{left:`${pos[0]}%`,top:`${pos[1]}%`,'--ox':`${offset[0]}px`,'--oy':`${offset[1]}px`} as CSSProperties}><PlayerToken color={colors[p.id%4]} number={p.id+1}/>{overview&&group.length>1&&<small className="pawn-group-count">{group.length}人</small>}</div>})}
       {view==='current'&&choices.map((c,i)=><button key={c.id} className="tokyo-choice" aria-label={`${String.fromCharCode(65+i)} ${describe(c.id)}を選ぶ`} aria-pressed={selected===c.id} style={{left:`${c.bx}%`,top:`${c.by}%`}} onClick={()=>setSelection({from:player.position,id:c.id})}>{String.fromCharCode(65+i)}</button>)}
     </div>
     </div>
@@ -82,7 +84,7 @@ export function TokyoBoard({state,onStep}:{state:GameState;onStep:(id:string)=>v
     <div className="tokyo-hud"><div className="tokyo-player" style={{borderLeftColor:colors[player.id%4]}}><span style={{background:colors[player.id%4]}}>{player.id+1}</span><b>{player.name}</b><strong>{player.money/10000}万円</strong></div><button className={`tokyo-destination ${newDestination?"destination-new":""}`} onClick={()=>setView(view==='destination'?'current':'destination')} aria-pressed={view==='destination'}><span>⚑ {newDestination?'新しい目的地':'目的地'}　{state.destinationId&&describe(state.destinationId)}</span><small>最短 {distance(player.position,state.destinationId!)}マス・到着で{ARRIVAL_PRIZE/10000}万円</small></button></div>
     {phase.name==='moving'&&!overview&&<div className={`tokyo-steps ${stepsAside?'steps-aside':''}`}>あと <b>{phase.remaining}</b> マス</div>}
     <div className={`tokyo-map-tools ${toolsRaised?'tools-raised':''}`}><div className="tokyo-tool-buttons">{overview&&<button onClick={()=>setOverviewFit(!overviewFit)}>{overviewFit?"地図を拡大":"全体を収める"}</button>}<button onClick={()=>setView(view==='current'?'overview':'current')}>{view==='current'?'全体地図':'現在地へ戻る'}</button>{phase.name==='moving'&&<button ref={standingsTrigger} onClick={()=>setStandings(true)}>みんなの状況</button>}</div><small>{state.round} / {MAX_ROUNDS} 周目</small></div>
-    {phase.name==='moving'&&view==='current'&&<div className={`tokyo-command ${commandRaised?'command-raised':''}`}><div><strong>{player.kind==='cpu'?`${player.name}が移動中…`:selected?describe(selected):'進む先を選ぼう'}</strong><small>{selected?`目的地まで最短 ${distance(selected,state.destinationId!)}マス`:'マスを選んで「決定」'}</small></div>{player.kind==='human'&&<button disabled={!selected} onClick={()=>{if(selected){onStep(selected);setSelection(null)}}}>決定</button>}</div>}
+    {phase.name==='moving'&&view==='current'&&<div className={`tokyo-command ${commandRaised?'command-raised':''}`}><div><strong>{player.kind==='cpu'||!canAct?`${player.name}が移動中…`:selected?describe(selected):'進む先を選ぼう'}</strong><small>{selected?`目的地まで最短 ${distance(selected,state.destinationId!)}マス`:canAct?'マスを選んで「決定」':'移動を見守ろう'}</small></div>{player.kind==='human'&&canAct&&<button disabled={!selected} onClick={()=>{if(selected){onStep(selected);setSelection(null)}}}>決定</button>}</div>}
     </div>
     {standings&&phase.name==='moving'&&<div className="tokyo-standings" role="dialog" aria-modal="true" aria-labelledby="standings-title" onKeyDown={e=>{if(e.key==='Escape')closeStandings();if(e.key==='Tab')e.preventDefault()}}><section><h2 id="standings-title">みんなの状況</h2><p>先に{WIN_MONEY/10000}万円で優勝！</p><ol>{rankPlayers(state.players).map((p,i)=><li key={p.id}><span className="standings-number" style={{background:colors[p.id%4]}}>{p.id+1}</span><span>{i+1}位　{p.name}{p.id===player.id?'（手番）':''}</span><strong>{p.money/10000}万円<small>目的地に{p.arrivals}回到着</small></strong></li>)}</ol><button autoFocus onClick={closeStandings}>マップへ戻る</button></section></div>}
   </div>;

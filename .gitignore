@@ -4,3 +4,10 @@ dist/
 .dev.vars
 *.local
 .playwright-mcp/
+.wrangler/
+
+# Local tools and credentials
+.claude/settings.local.json
+.superpowers/
+.env.*.local
+.dev.vars.*

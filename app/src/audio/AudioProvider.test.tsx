@@ -1,0 +1,20 @@
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, expect, it } from 'vitest';
+import { AudioProvider } from './AudioProvider';
+afterEach(()=>{cleanup();localStorage.clear()});
+it('persists separate volumes and mute, including on browsers without Web Audio',()=>{
+  const {unmount}=render(<AudioProvider><button>遊ぶ</button></AudioProvider>);
+  fireEvent.click(screen.getByRole('button',{name:'遊ぶ'}));
+  fireEvent.click(screen.getByRole('button',{name:'音の設定'}));
+  fireEvent.change(screen.getByLabelText('BGM音量'),{target:{value:'20'}});
+  fireEvent.change(screen.getByLabelText('効果音音量'),{target:{value:'80'}});
+  fireEvent.click(screen.getByRole('button',{name:'すべて消音'}));
+  expect(JSON.parse(localStorage.getItem('ogiri-dice-audio-v1')!)).toEqual({music:.2,effects:.8,muted:true});
+  unmount();render(<AudioProvider><span>ゲーム</span></AudioProvider>);
+  fireEvent.click(screen.getByRole('button',{name:'音の設定'}));
+  expect((screen.getByLabelText('BGM音量') as HTMLInputElement).value).toBe('20');
+  expect(screen.getByRole('button',{name:'音を出す'}).getAttribute('aria-pressed')).toBe('true');
+  fireEvent.keyDown(screen.getByLabelText('BGM音量'),{key:'Escape'});
+  expect(screen.queryByLabelText('BGM音量')).toBeNull();
+  expect(document.activeElement).toBe(screen.getByRole('button',{name:'音の設定'}));
+});

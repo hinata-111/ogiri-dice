@@ -1,9 +1,13 @@
 import { buildCpuPrompt, buildEvaluatePrompt } from "./prompts";
 import { callGemini } from "./gemini";
 import { RateLimiter } from "./rateLimiter";
+import { roomRoute, reply, type RoomEnv } from './room';
+export { GameRoom } from './room';
 
 interface Env {
   GEMINI_API_KEY: string;
+  ROOMS?: DurableObjectNamespace;
+  USE_MOCK?: string;
 }
 
 // ホットシートプレイでは人間+CPU複数人が同一IPから連続リクエストするため、
@@ -44,6 +48,13 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
+    if (new URL(request.url).pathname.startsWith('/api/rooms')) {
+      if (!env.ROOMS) return reply({ error: 'オンライン対戦の設定がありません' }, 503);
+      const ip = request.headers.get('CF-Connecting-IP') ?? 'unknown';
+      if (!limiter.allow(`room:${ip}`)) return reply({ error: '少し待ってからお試しください' }, 429);
+      try { return await roomRoute(request, env as RoomEnv); }
+      catch { return reply({ error: '入力をご確認ください' }, 400); }
     }
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 

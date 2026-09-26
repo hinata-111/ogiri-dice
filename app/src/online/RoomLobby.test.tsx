@@ -1,0 +1,22 @@
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+import { initialState } from '../game/state';
+import { RoomLobby } from './RoomLobby';
+import type { RoomSnapshot } from './protocol';
+afterEach(cleanup);
+const room:RoomSnapshot={code:'ABCD2345',revision:1,gameRevision:1,hostId:'a',members:[{id:'a',name:'太郎',connected:true,playerId:null}],game:{...initialState,phase:{name:'setup'}},deadline:null,expiresAt:100000,serverNow:1,expired:false};
+it('shows four seats and only enables the host after every participant is connected',()=>{
+  const start=vi.fn();
+  const props={room,memberId:'a',inviteUrl:'http://localhost/?room=ABCD2345',copied:false,connected:true,pending:false,onCopy:vi.fn(),onStart:start};
+  const {rerender}=render(<RoomLobby {...props}/>);
+  expect(screen.getAllByRole('listitem')).toHaveLength(4);
+  expect((screen.getByRole('button',{name:'みんなで開始'}) as HTMLButtonElement).disabled).toBe(true);
+  const joined={...room,members:[...room.members,{id:'b',name:'花子',connected:true,playerId:null}]};
+  rerender(<RoomLobby {...props} room={joined}/>);
+  fireEvent.click(screen.getByRole('button',{name:'みんなで開始'}));expect(start).toHaveBeenCalledOnce();
+  rerender(<RoomLobby {...props} room={{...joined,members:joined.members.map(m=>({...m,connected:m.id==='a'}))}}/>);
+  expect((screen.getByRole('button',{name:'みんなで開始'}) as HTMLButtonElement).disabled).toBe(true);
+  expect(screen.getByText('再接続待ち')).toBeTruthy();
+  rerender(<RoomLobby {...props} room={joined} memberId="b"/>);
+  expect(screen.queryByRole('button',{name:'みんなで開始'})).toBeNull();
+});

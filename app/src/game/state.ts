@@ -1,4 +1,5 @@
 import { buildNodeMap, moveOptions } from "./graph";
+import { FALLBACK_EVALUATION } from '../ai/evaluator';
 import {
   applyMoney, ARRIVAL_PRIZE, BEST_ANSWER_MIN_SCORE, blueGain, INITIAL_MONEY,
   MAX_ROUNDS, redLoss, TIME_UP_RESULT, WIN_MONEY,
@@ -16,6 +17,9 @@ export type Phase =
   | { name: "title" }
   | { name: "setup" }
   | { name: "turnStart" }
+  | { name: "roundAnswering" }
+  | { name: "roundEvaluating" }
+  | { name: "roundResults" }
   | { name: "awaitingAnswer"; topic: Topic; context: AnswerContext }
   | { name: "evaluating"; topic: Topic; answer: string; context: AnswerContext }
   | {
@@ -32,6 +36,8 @@ export type Phase =
   | { name: "gameResult" };
 
 export interface GameState {
+  simultaneous?: boolean;
+  sharedRound?: SharedRound | null;
   phase: Phase;
   nodes: MapNode[];
   players: Player[];
@@ -43,6 +49,11 @@ export interface GameState {
   winnerId: number | null; // 100万達成者。round切れ終了時はnull
 }
 
+export interface SharedRound {
+  topic: Topic;
+  entries: { playerId: number; submitted: boolean; answer: string; result: EvaluationResult | null }[];
+}
+
 export type GameAction =
   | { type: "SHOW_SETUP" }
   | {
@@ -51,7 +62,13 @@ export type GameAction =
       nodes: MapNode[];
       startId: string;
       destinationId: string;
+      simultaneous?: boolean;
     }
+  | { type: "BEGIN_ROUND"; topic: Topic }
+  | { type: "SUBMIT_ROUND_ANSWER"; round: number; playerId: number; answer: string }
+  | { type: "CLOSE_ROUND" }
+  | { type: "ROUND_EVALUATED"; round: number; playerId: number; result: EvaluationResult }
+  | { type: "ROUND_EVALUATION_TIMEOUT" }
   | { type: "BEGIN_TURN"; topic: Topic }
   | { type: "BEGIN_CHALLENGE"; topic: Topic; target?: number }
   | { type: "SUBMIT_ANSWER"; answer: string }
@@ -105,8 +122,18 @@ function endTurn(state: GameState): GameState {
     ...state,
     currentPlayerIndex: (state.currentPlayerIndex + 1) % state.players.length,
     round: isLastPlayer ? state.round + 1 : state.round,
-    phase: { name: "turnStart" },
+    sharedRound: isLastPlayer ? null : state.sharedRound,
+    phase: state.sharedRound && !isLastPlayer
+      ? { name: 'moving', remaining: state.sharedRound.entries[state.currentPlayerIndex + 1].result!.score, cameFrom: null }
+      : { name: "turnStart" },
   };
+}
+
+function closeRound(state: GameState): GameState {
+  const sharedRound = state.sharedRound!;
+  const entries = sharedRound.entries.map(entry => entry.submitted ? entry : { ...entry, result: TIME_UP_RESULT });
+  return { ...state, sharedRound: { ...sharedRound, entries },
+    phase: { name: entries.every(entry => entry.result) ? 'roundResults' : 'roundEvaluating' } };
 }
 
 /** 記録対象ならベスト回答に追加 */
@@ -152,17 +179,54 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
         nodes: action.nodes,
         players,
         destinationId: action.destinationId,
+        simultaneous: action.simultaneous ?? false,
+        sharedRound: null,
         phase: { name: "turnStart" },
       };
     }
 
     case "BEGIN_TURN":
-      if (phase.name !== "turnStart") return state;
+      if (phase.name !== "turnStart" || state.simultaneous) return state;
       return {
         ...state,
         usedTopicIds: [...state.usedTopicIds, action.topic.id],
         phase: { name: "awaitingAnswer", topic: action.topic, context: { kind: "main" } },
       };
+
+    case 'BEGIN_ROUND':
+      if (phase.name !== 'turnStart' || !state.simultaneous || state.currentPlayerIndex !== 0) return state;
+      return { ...state, usedTopicIds: [...state.usedTopicIds, action.topic.id],
+        sharedRound: { topic: action.topic, entries: state.players.map(p => ({ playerId: p.id, submitted: false, answer: '', result: null })) },
+        phase: { name: 'roundAnswering' } };
+
+    case 'SUBMIT_ROUND_ANSWER': {
+      const round = state.sharedRound;
+      if (phase.name !== 'roundAnswering' || !round || action.round !== state.round) return state;
+      const entry = round.entries.find(e => e.playerId === action.playerId);
+      if (!entry || entry.submitted || !action.answer.trim() || action.answer.trim().length > 120) return state;
+      const entries = round.entries.map(e => e === entry ? { ...e, submitted: true, answer: action.answer.trim() } : e);
+      const next: GameState = { ...state, sharedRound: { ...round, entries } };
+      return entries.every(e => e.submitted) ? closeRound(next) : next;
+    }
+
+    case 'CLOSE_ROUND':
+      return phase.name === 'roundAnswering' && state.sharedRound ? closeRound(state) : state;
+
+    case 'ROUND_EVALUATED': {
+      const round = state.sharedRound;
+      if (phase.name !== 'roundEvaluating' || !round || action.round !== state.round) return state;
+      const entry = round.entries.find(e => e.playerId === action.playerId);
+      if (!entry || entry.result || !entry.submitted) return state;
+      if (!Number.isInteger(action.result.score) || action.result.score < 1 || action.result.score > 6) return state;
+      const entries = round.entries.map(e => e === entry ? { ...e, result: action.result } : e);
+      return { ...state, sharedRound: { ...round, entries },
+        phase: { name: entries.every(e => e.result) ? 'roundResults' : 'roundEvaluating' } };
+    }
+
+    case 'ROUND_EVALUATION_TIMEOUT':
+      if (phase.name !== 'roundEvaluating' || !state.sharedRound) return state;
+      return { ...state, phase: { name: 'roundResults' }, sharedRound: { ...state.sharedRound,
+        entries: state.sharedRound.entries.map(e => e.result ? e : { ...e, result: FALLBACK_EVALUATION }) } };
 
     case "BEGIN_CHALLENGE": {
       if (phase.name !== "challengeIntro") return state;
@@ -224,6 +288,15 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
       };
 
     case "PROCEED": {
+      if (phase.name === 'roundResults' && state.sharedRound) {
+        const round = state.sharedRound;
+        const bestAnswers = [...state.bestAnswers, ...round.entries.filter(e => e.result!.score >= BEST_ANSWER_MIN_SCORE && e.answer).map(e => ({
+          playerName: state.players.find(p => p.id === e.playerId)!.name,
+          topicPrompt: round.topic.prompt, answer: e.answer, score: e.result!.score, comment: e.result!.comment,
+        }))];
+        return { ...state, bestAnswers, currentPlayerIndex: 0,
+          phase: { name: 'moving', remaining: round.entries[0].result!.score, cameFrom: null } };
+      }
       if (phase.name !== "showingResult") return state;
       const bestAnswers = recordBest(state, phase.topic, phase.answer, phase.result);
       if (phase.context.kind === "main") {

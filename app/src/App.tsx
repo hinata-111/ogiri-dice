@@ -1,38 +1,25 @@
-import { useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState } from "react";
+import { GameView } from './components/GameView';
+import { AudioProvider } from './audio/AudioProvider';
+import { OnlineGame } from "./online/OnlineGame";
+import { useEffect, useMemo, useReducer, useState } from "react";
 import { currentPlayer, gameReducer, initialState } from "./game/state";
 import { pickRandomTopic } from "./game/topics";
 import { pickDestination } from "./game/destination";
 import { buildNodeMap, nextStepToward } from "./game/graph";
-import { ANSWER_TIME_LIMIT_MS, WIN_MONEY } from "./game/rules";
+import { ANSWER_TIME_LIMIT_MS } from "./game/rules";
 import mapData from "./data/map.json";
 import topicsData from "./data/topics.json";
 import type { MapNode, PlayerConfig, Topic } from "./game/types";
 import { createEvaluator } from "./ai";
 import { useCountdown } from "./hooks/useCountdown";
-import { useViewportHeight } from "./hooks/useViewportHeight";
 import {
   ARRIVAL_MS, CAMERA_SETTLE_MS, CHALLENGE_INTRO_MS, CPU_SUBMIT_DELAY_MS, MOVE_STEP_MS,
 } from "./ui/constants";
-import { TitleScreen } from "./components/TitleScreen";
-import { SetupScreen } from "./components/SetupScreen";
-import { TokyoBoard } from "./components/map/TokyoBoard";
-
-
-import { TopicCard } from "./components/TopicCard";
-import { AnswerInput } from "./components/AnswerInput";
-
-import { ResultOverlay } from "./components/ResultOverlay";
-import { ChallengeIntro } from "./components/ChallengeIntro";
-import { ArrivalOverlay } from "./components/ArrivalOverlay";
-import { GameResultScreen } from "./components/GameResultScreen";
-
 const nodes = (mapData as { nodes: MapNode[] }).nodes;
 const topics = (topicsData as { topics: Topic[] }).topics;
 const START_ID = "shinjuku";
 
-export default function App() {
-  useViewportHeight();
-  const stage=useRef<HTMLDivElement>(null);
+function LocalGame({ onOnline }: { onOnline: () => void }) {
   const [state, dispatch] = useReducer(gameReducer, initialState);
   const evaluator = useMemo(() => createEvaluator(), []);
   const nodeMap = useMemo(() => buildNodeMap(nodes), []);
@@ -40,12 +27,6 @@ export default function App() {
   const phase = state.phase;
   const player = state.players.length > 0 ? currentPlayer(state) : null;
   const isCpuTurn = player?.kind === "cpu";
-  useLayoutEffect(()=>{
-    const target=['.answer-form input:not([readonly])','.overlay .primary:not(:disabled)','.result-reading','.answer-window','.tokyo-choice']
-      .map(selector=>stage.current?.querySelector<HTMLElement>(selector)).find(Boolean);
-    target?.focus({preventScroll:true});
-  },[phase.name]);
-
   // turnStart: カメラ移動を待ってお題
   useEffect(() => {
     if (phase.name !== "turnStart" || !isCpuTurn) return;
@@ -133,81 +114,17 @@ export default function App() {
       destinationId: pickDestination(nodes, [START_ID]),
     });
 
-  const inGame = !["title", "setup"].includes(phase.name);
-  const destination = state.destinationId ? (nodeMap.get(state.destinationId) ?? null) : null;
-  const stateClass =
-    phase.name === "evaluating" ? " state-evaluating"
-    : phase.name === "showingResult" ? " state-result"
-    : "";
-
-  return (
-    <div className={`stage${stateClass}`} ref={stage}>
-      <div>
-      {inGame && (
-        <div inert={phase.name!=='moving'}>
-          <TokyoBoard state={state} onStep={(nodeId) => dispatch({ type: "STEP_TO", nodeId })} />
-        </div>
-      )}
-
-      {phase.name === "title" && (
-        <TitleScreen onStart={() => dispatch({ type: "SHOW_SETUP" })} />
-      )}
-      {phase.name === "setup" && <SetupScreen onSubmit={startGame} />}
-
-      {phase.name === "turnStart" && !isCpuTurn && <div className="overlay"><section className="panel turn-panel"><p className="eyebrow">次の挑戦者</p><h2>{player?.name}の番！</h2><p>お題を見て15秒で回答。点数の分だけ東京を進もう。</p><button className="primary" onClick={()=>dispatch({type:'BEGIN_TURN',topic:pickRandomTopic(topics,state.usedTopicIds)})}>お題を見る</button></section></div>}
-
-      {(phase.name === "awaitingAnswer" || phase.name === "evaluating") && (
-        <section className="answer-window" tabIndex={-1} aria-label="お題と回答">
-          <div className="answer-heading"><span>{player?.name}のお題</span>{timerActive&&<strong className={remaining<=5000?'urgent':''}>あと {Math.ceil(remaining/1000)} 秒</strong>}</div>
-          <div className="answer-topic"><TopicCard
-              topic={phase.topic}
-              judging={phase.name === "evaluating"}
-              context={phase.context}
-            /></div>
-          {timerActive && (
-            <div className="timer-bar">
-              <div className="fill" style={{ width: `${(remaining / ANSWER_TIME_LIMIT_MS) * 100}%` }} />
-            </div>
-          )}
-          {phase.name==='awaitingAnswer'&&<AnswerInput
-            disabled={false}
-            cpuAnswer={phase.name === "awaitingAnswer" && isCpuTurn ? (cpuAnswer ?? "…") : null}
-            onSubmit={(answer) => dispatch({ type: "SUBMIT_ANSWER", answer })}
-          />}
-          {phase.name==='evaluating'&&<p className="submitted-answer">{phase.answer}</p>}
-        </section>
-      )}
-
-      {phase.name === "challengeIntro" && <ChallengeIntro cellKind={phase.cellKind} onBegin={isCpuTurn ? undefined : ()=>dispatch({type:'BEGIN_CHALLENGE',topic:pickRandomTopic(topics,state.usedTopicIds),target:1+Math.floor(Math.random()*4)})} />}
-
-      {phase.name === "showingResult" && player && (
-        <ResultOverlay
-          topicPrompt={phase.topic.prompt}
-          result={phase.result}
-          answer={phase.answer}
-          playerName={player.name}
-          context={phase.context}
-          moneyDelta={phase.moneyDelta}
-          money={player.money}
-          onProceed={() => dispatch({ type: "PROCEED" })}
-          onRetry={() => dispatch({ type: "RE_EVALUATE" })}
-        />
-      )}
-
-      {phase.name === "arrival" && destination && (
-        <ArrivalOverlay name={nodeMap.get(phase.nodeId)?.name ?? ""} money={player!.money} onContinue={isCpuTurn ? undefined : ()=>dispatch({type:'ARRIVAL_DONE',nextDestinationId:pickDestination(nodes,[phase.nodeId])})} />
-      )}
-
-      {phase.name === "gameResult" && (
-        <GameResultScreen
-          players={state.players}
-          bestAnswers={state.bestAnswers}
-          winnerId={state.winnerId}
-          winMoney={WIN_MONEY}
-          onRestart={() => dispatch({ type: "RESTART" })}
-        />
-      )}
-      </div>
-    </div>
-  );
+  return <GameView state={state} dispatch={dispatch} remaining={remaining} cpuAnswer={cpuAnswer} startGame={startGame} onOnline={onOnline}/>;
 }
+
+function GameRouter() {
+  const initialCode = new URLSearchParams(window.location.search).get('room') ?? '';
+  const [online, setOnline] = useState(!!initialCode);
+  return online ? <OnlineGame initialCode={initialCode} onExit={() => {
+    const url = new URL(window.location.href); url.searchParams.delete('room');
+    window.history.replaceState({}, '', url); setOnline(false);
+  }} /> : <LocalGame onOnline={() => setOnline(true)} />;
+}
+
+export default function App() { return <AudioProvider><GameRouter/></AudioProvider>; }
+import './presentation/presentation.css';

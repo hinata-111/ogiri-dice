@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { TokyoBoard } from './components/map/TokyoBoard';
-import { gameReducer,initialState } from './game/state';
-import type { MapNode } from './game/types';
-import map from './data/map.json';
-import './index.css';
+import { TokyoBoard } from '../components/map/TokyoBoard';
+import { gameReducer,initialState } from '../game/state';
+import type { MapNode } from '../game/types';
+import map from '../data/map.json';
+import '../index.css';
+import '../presentation/presentation.css';
 
 function fixture(startId:string){
   let state=gameReducer(initialState,{type:'SHOW_SETUP'});

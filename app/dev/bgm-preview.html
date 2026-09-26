@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>大喜利ダイス · 元のBGMを調整</title>
+  <style>
+    :root{font-family:'Yu Gothic','Meiryo',sans-serif;color:#253448;background:#e8ebe5;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0}main{max-width:1120px;margin:auto;padding:52px 28px 38px}
+    .eyebrow{font-size:12px;letter-spacing:.08em;color:#61716c;margin:0 0 14px}h1{font-size:32px;line-height:1.4;margin:0 0 14px}
+    .intro{font-size:14px;color:#53645f;line-height:1.9;max-width:750px;margin:0}
+    .controls{display:flex;align-items:center;flex-wrap:wrap;gap:12px 26px;margin:28px 0 22px;padding-block:15px;border-block:1px solid #c7cfca}
+    .controls label{display:flex;align-items:center;gap:12px;font-size:13px}.controls input{width:140px;accent-color:#4f7775}.controls output{font-variant-numeric:tabular-nums;min-width:37px}
+    button{font:inherit;color:#253448;background:#faf9f3;border:1px solid #7e8a8b;border-radius:5px;min-height:38px;padding:6px 14px;cursor:pointer;font-size:12px}
+    button:focus-visible,a:focus-visible,audio:focus-visible,input:focus-visible{outline:3px solid #477783;outline-offset:4px}
+    #status{font-size:12px;color:#5c6d67;margin-left:auto}
+    .tracks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
+    article{display:flex;flex-direction:column;min-width:0;background:#faf9f3;border:1px solid #b2bcb8;border-radius:8px;padding:23px 21px;border-top:4px solid #728d86;transition:box-shadow .15s}
+    article:nth-child(2){border-top-color:#a08c66}article:nth-child(3){border-top-color:#8a8298}article.playing{box-shadow:0 0 0 3px #5b837c55}
+    .track-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:25px}.letter{font-size:30px;line-height:1;font-weight:700;color:#506e69}.badge{font-size:10px;border:1px solid #a7b8ad;padding:4px 8px;border-radius:4px;color:#4b6f62;background:#edf2e9}
+    h2{font-size:21px;margin:0 0 10px;letter-spacing:.025em}.sound{font-size:13px;font-weight:700;margin:0 0 19px;color:#697672}
+    .description{font-size:13px;line-height:1.85;margin:0 0 20px;flex:1}dl{font-size:12px;margin:0 0 24px;display:grid;grid-template-columns:auto 1fr;gap:8px 12px}dt{color:#7a8581}dd{margin:0;text-align:right}
+    audio{width:100%;height:44px;display:block}audio::-webkit-media-controls-panel{background:#e9ede7}
+    .recommendation{margin:26px 0 0;padding:18px 21px;border-left:3px solid #728d86;background:#f4f5ed;font-size:13px;line-height:1.9}
+    .scene-title{font-size:17px;margin:0 0 16px}details{margin-top:28px}summary{cursor:pointer;font-size:16px;font-weight:700;padding:14px 0}details .tracks{margin-top:12px}h3{font-size:21px;margin:0 0 10px;letter-spacing:.025em}
+    footer{display:flex;justify-content:space-between;gap:18px;margin-top:22px;color:#74817a;font-size:11px;line-height:1.8}footer a{color:#496c71;white-space:nowrap}
+    @media(max-width:760px){main{padding:30px 18px}h1{font-size:26px}.tracks{grid-template-columns:1fr}.track-top{margin-bottom:16px}article{padding:20px}.description{margin-bottom:14px}dl{margin-bottom:17px}#status{margin-left:0;width:100%}.controls{gap:12px}.controls label{flex:1}.controls input{width:100px}footer{flex-direction:column}}
+    @media(prefers-reduced-motion:reduce){article{transition:none}}
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">大喜利ダイス · BGMの試聴</p>
+    <h1>元のBGMを、少し柔らかく</h1>
+    <p class="intro">メロディーとコード進行を残した、2段階の調整版です。<br>元の曲と比較音量をそろえて、音色や伴奏の違いを聴き比べられます。</p>
+    <div class="controls">
+      <label>試聴音量 <input id="volume" type="range" min="0" max="100" value="70" aria-label="試聴音量"/><output id="volume-value">70%</output></label>
+      <button id="stop" type="button">すべて停止</button>
+      <span id="status" role="status">再生ボタンで試聴できます</span>
+    </div>
+    <h2 class="scene-title">マップのBGM</h2>
+    <div class="tracks">
+      <article data-title="マップ・元の曲">
+        <div class="track-top"><span class="letter">元</span><span class="badge">比較用</span></div>
+        <h3>元の曲</h3><p class="sound">現在のメロディーと音色</p>
+        <p class="description">ゲームで使っている曲の譜面と音色から書き出しました。調整前の弾みや音の強さを確認できます。</p>
+        <dl><dt>テンポ</dt><dd>104 BPM</dd><dt>長さ</dt><dd>約38秒</dd><dt>伴奏</dt><dd>元のまま</dd></dl>
+        <audio controls preload="metadata" aria-label="マップ 元の曲を試聴" src="/dev/audio/previews/2026-09-26-original/board-original.wav"></audio>
+      </article>
+      <article data-title="マップ・A 音色を柔らかく">
+        <div class="track-top"><span class="letter">A</span><span class="badge">マップBGMに採用</span></div>
+        <h3>音色を柔らかく</h3><p class="sound">テンポと音の並びを維持</p>
+        <p class="description">高音の刺さりと、音の出だしを丸く。打楽器と伴奏を控えめにして、元の曲の楽しさを残します。</p>
+        <dl><dt>テンポ</dt><dd>104 BPM</dd><dt>長さ</dt><dd>約38秒</dd><dt>伴奏</dt><dd>音を残して強さを調整</dd></dl>
+        <audio controls preload="metadata" aria-label="マップ A 音色を柔らかくを試聴" src="/dev/audio/previews/2026-09-26-original/board-soft.wav"></audio>
+      </article>
+      <article data-title="マップ・B もう少し穏やかに">
+        <div class="track-top"><span class="letter">B</span><span class="badge">落ち着きを追加</span></div>
+        <h3>もう少し穏やかに</h3><p class="sound">同じメロディーに余白を</p>
+        <p class="description">Aの音色で、少しゆっくり演奏。低音と和音の回数を半分にして、強い太鼓の音を外します。</p>
+        <dl><dt>テンポ</dt><dd>96 BPM</dd><dt>長さ</dt><dd>約41秒</dd><dt>伴奏</dt><dd>音数を減らして余白を追加</dd></dl>
+        <audio controls preload="metadata" aria-label="マップ B もう少し穏やかにを試聴" src="/dev/audio/previews/2026-09-26-original/board-calm.wav"></audio>
+      </article>
+    </div>
+    <p class="recommendation"><strong>マップのBGMにAを採用しました。</strong> 元の曲のテンポや弾みをそのままに、強く感じる部分を抑えています。ゲーム内でも同じ音色と伴奏バランスで繰り返し演奏します。</p>
+    <details>
+      <summary>タイトル画面のBGMも聴く</summary>
+      <div class="tracks">
+        <article data-title="タイトル・元の曲">
+          <div class="track-top"><span class="letter">元</span><span class="badge">比較用</span></div>
+          <h3>元の曲</h3><p class="sound">現在のタイトル曲</p>
+          <p class="description">現在のメロディーと伴奏です。マップの曲と同じ方針で調整版を用意しています。</p>
+          <dl><dt>テンポ</dt><dd>116 BPM</dd><dt>長さ</dt><dd>約34秒</dd></dl>
+          <audio controls preload="none" aria-label="タイトル 元の曲を試聴" src="/dev/audio/previews/2026-09-26-original/menu-original.wav"></audio>
+        </article>
+        <article data-title="タイトル・A 音色を柔らかく">
+          <div class="track-top"><span class="letter">A</span><span class="badge">原曲に近い</span></div>
+          <h3>音色を柔らかく</h3><p class="sound">メロディーとリズムを維持</p>
+          <p class="description">主旋律の高音を丸くし、伴奏と打楽器の主張を抑えています。</p>
+          <dl><dt>テンポ</dt><dd>116 BPM</dd><dt>長さ</dt><dd>約34秒</dd></dl>
+          <audio controls preload="none" aria-label="タイトル A 音色を柔らかくを試聴" src="/dev/audio/previews/2026-09-26-original/menu-soft.wav"></audio>
+        </article>
+        <article data-title="タイトル・B もう少し穏やかに">
+          <div class="track-top"><span class="letter">B</span><span class="badge">落ち着きを追加</span></div>
+          <h3>もう少し穏やかに</h3><p class="sound">少し遅く、伴奏を軽く</p>
+          <p class="description">元のメロディーを保ち、音色と伴奏にゆとりを加えています。</p>
+          <dl><dt>テンポ</dt><dd>108 BPM</dd><dt>長さ</dt><dd>約36秒</dd></dl>
+          <audio controls preload="none" aria-label="タイトル B もう少し穏やかにを試聴" src="/dev/audio/previews/2026-09-26-original/menu-calm.wav"></audio>
+        </article>
+      </div>
+    </details>
+    <footer><span>元のBGMを使った試聴版です。別の曲を再生すると、前の曲は止まります。</span><a href="/">ゲームへ戻る</a></footer>
+  </main>
+  <script>
+    const players = Array.from(document.querySelectorAll('audio'));
+    const volume = document.getElementById('volume');
+    const status = document.getElementById('status');
+    function updateStatus() {
+      const active = players.find(player => !player.paused && !player.ended);
+      players.forEach(player => player.closest('article').classList.toggle('playing', player === active));
+      status.textContent = active ? active.closest('article').dataset.title + 'を試聴中' : '再生ボタンで試聴できます';
+    }
+    players.forEach(player => {
+      player.volume = Number(volume.value)/100;
+      player.addEventListener('play', () => { players.forEach(other => { if (other !== player) other.pause(); }); updateStatus(); });
+      player.addEventListener('pause', updateStatus);
+      player.addEventListener('ended', updateStatus);
+      player.addEventListener('error', () => { status.textContent = '音源を読み込めませんでした。ページを再読み込みしてください。'; });
+    });
+    volume.addEventListener('input', () => { players.forEach(player => { player.volume = Number(volume.value)/100; }); document.getElementById('volume-value').value = volume.value + '%'; });
+    document.getElementById('stop').addEventListener('click', () => { players.forEach(player => { player.pause(); player.currentTime = 0; }); updateStatus(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) players.forEach(player => player.pause()); });
+  </script>
+</body>
+</html>

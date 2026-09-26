@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>大喜利ダイス · 画面サイズ確認</title>
+<style>body{margin:0;padding:20px;background:#263742;color:#f8f7ee;font:13px sans-serif}header{height:50px;display:flex;gap:24px;align-items:center}select{padding:5px;font:inherit}iframe{display:block;border:0;box-shadow:0 4px 15px #0003}</style></head>
+<body><header><label>画面サイズ <select id="size"><option value="1100,640">PC 1100×640</option><option value="390,640">スマホ縦 390×640</option><option value="844,390">スマホ横 844×390</option></select></label>
+<label>場面 <select id="scene"><option value="answer">回答発表</option><option value="shared">全員発表</option><option value="loss">長文・減額</option><option value="fallback">採点失敗</option><option value="lobby">4人の待機室</option><option value="arrival">到着</option><option value="final">優勝</option><option value="board">移動</option><option value="title">タイトル</option></select></label><span>実際の画面部品・確認用データ</span></header>
+<iframe id="review" title="確認画面" width="1100" height="640" src="/dev/scenes.html?scene=answer&amp;clean=1"></iframe>
+<script>const frame=document.getElementById('review');document.getElementById('size').onchange=e=>{const [w,h]=e.target.value.split(',');frame.width=w;frame.height=h};document.getElementById('scene').onchange=e=>{const v=e.target.value;frame.src=v==='title'?'/':v==='board'?'/dev/board.html':'/dev/scenes.html?scene='+v+'&clean=1'};</script>
+</body></html>

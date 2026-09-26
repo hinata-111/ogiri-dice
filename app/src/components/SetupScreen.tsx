@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { CpuPersonality, PlayerConfig, PlayerKind } from "../game/types";
+import { TheaterScene, PlayerToken } from '../presentation/StageArt';
+import { playerColors } from '../presentation/palette';
 
 interface Props {
   onSubmit: (players: PlayerConfig[]) => void;
@@ -37,13 +39,14 @@ export function SetupScreen({ onSubmit }: Props) {
     );
 
   return (
-    <div className="overlay setup-overlay">
+    <div className="departure-screen setup-screen">
+      <TheaterScene/>
       <div className="panel setup-panel">
-        <h2>プレイヤー設定(1〜4人)</h2>
+        <header className="preparation-heading"><p className="route-kicker">開演の準備</p><h2>今日の出演メンバー</h2><p>プレイヤー設定(1〜4人) · 名前と操作方法を決めよう。</p></header>
         <div className="setup-rows">
         {rows.map((r, i) => (
           <div className="setup-row" key={i}>
-            <strong className={`setup-player-number player-color-${i}`}>{i+1}<small>人目</small></strong>
+            <div className={`setup-player-number player-color-${i}`}><PlayerToken color={playerColors[i]} number={i+1}/><small>プレイヤー{i+1}</small></div>
             <input
               type="text"
               aria-label={`プレイヤー${i+1}の名前`}
@@ -71,13 +74,14 @@ export function SetupScreen({ onSubmit }: Props) {
             )}
             {rows.length > 1 && (
               <button className="ghost" aria-label={`プレイヤー${i+1}を外す`} onClick={() => removeRow(i)}>
-                ✕
+                ×
               </button>
             )}
           </div>
         ))}
         </div>
         <div className="setup-footer">
+        <span className="boarding-count">{rows.length}人で挑戦</span>
         {rows.length < 4 && (
           <button className="ghost" onClick={addRow}>
             ＋ プレイヤー追加
