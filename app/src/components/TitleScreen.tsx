@@ -22,7 +22,7 @@ export function TitleScreen({ onStart, onOnline }: Props) {
         </button>}
       </div>
       <button ref={helpButton} className="title-help" aria-expanded={help} aria-controls="how-to-play" onClick={() => setHelp(!help)}>遊び方 <span aria-hidden="true">{help?'−':'＋'}</span></button>
-      {help && <section className="travel-help" id="how-to-play"><h2>笑って、進んで、一番乗り。</h2><ol><li><b>お題にひと言。</b> 1台で遊ぶときは{ANSWER_TIME_LIMIT_MS/1000}秒。オンラインは全員で同じお題に{ONLINE_ROUND_ANSWER_MS/1000}秒で回答。採点は1〜6点、点数の数だけ東京を進もう。</li><li><b>目的地へ一番乗り！</b> 到着すると{ARRIVAL_PRIZE/10000}万円。青・赤マスでは{ANSWER_TIME_LIMIT_MS/1000}秒の追加お題に挑戦。</li><li><b>先に{WIN_MONEY/10000}万円で優勝。</b> うまい回答も、思わぬ珍回答も、みんなで楽しもう。</li></ol><button onClick={() => { setHelp(false); helpButton.current?.focus(); }}>とじる</button></section>}
+      {help && <section className="travel-help" id="how-to-play"><h2>笑って、進んで、一番乗り。</h2><ol><li><b>お題にひと言。</b> どちらの遊び方も全員で同じお題に{ONLINE_ROUND_ANSWER_MS/1000}秒で回答。CPUも同じお題に挑戦。採点は1〜6点、点数の数だけ東京を進もう。</li><li><b>目的地へ一番乗り！</b> 到着すると{ARRIVAL_PRIZE/10000}万円。青・赤マスでは{ANSWER_TIME_LIMIT_MS/1000}秒の追加お題に挑戦。</li><li><b>先に{WIN_MONEY/10000}万円で優勝。</b> うまい回答も、思わぬ珍回答も、みんなで楽しもう。</li></ol><button onClick={() => { setHelp(false); helpButton.current?.focus(); }}>とじる</button></section>}
     </div>
     <div className="departure-caption"><span>東京の劇場をめぐる</span><span>まもなく、開演です。</span></div>
   </main>;

@@ -11,7 +11,7 @@
 
 ## 仕様の優先順
 
-オンラインの通常回答・移動順は[共通30秒ラウンド](superpowers/specs/2026-09-26-shared-round-design.md)を最優先にします。部屋・接続・復帰は[オンライン対戦](superpowers/specs/2026-09-26-online-multiplayer-design.md)、盤面・青赤チャレンジ・賞金・勝利条件は[v2東京マップ](superpowers/specs/2026-07-08-ogiri-dice-v2-tokyo-map-design.md)を参照します。
+両モードの通常回答・移動順は[共通30秒ラウンド](superpowers/specs/2026-09-26-shared-round-design.md)を最優先にします。部屋・接続・復帰は[オンライン対戦](superpowers/specs/2026-09-26-online-multiplayer-design.md)、盤面・青赤チャレンジ・賞金・勝利条件は[v2東京マップ](superpowers/specs/2026-07-08-ogiri-dice-v2-tokyo-map-design.md)を参照します。
 
 `superpowers/specs/`は各変更の設計、`superpowers/plans/`は実施計画です。`design/`は見た目・音響の検討と確認記録、`research/`は調査資料です。過去の設計書の承認状態や検証履歴は、現在のコード全体の状態を保証するものではありません。
 

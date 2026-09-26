@@ -24,6 +24,8 @@
 .online-board .answer-window { z-index: 45; }
 .online-lobby { max-width: 580px; }
 .shared-round-status { font-size: 13px; margin: 8px 0; }
+.shared-answer-inputs { min-height: 0; overflow-y: auto; }
+.shared-answer-inputs > section + section { margin-top: 12px; }
 .shared-round-results { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; min-height: 0; overflow-y: auto; }
 .shared-round-window > p, .shared-round-window > .answer-heading { flex-shrink: 0; }
 .shared-round-results li { border: 1px solid #c8dbe1; border-radius: 8px; padding: 10px; overflow-wrap: anywhere; }

@@ -13,6 +13,7 @@ export function useCountdown(active: boolean, totalMs: number, onExpire: () => v
       expiredRef.current = false;
       return;
     }
+    setRemaining(totalMs);
     const startedAt = Date.now();
     const timer = setInterval(() => {
       const left = Math.max(0, totalMs - (Date.now() - startedAt));

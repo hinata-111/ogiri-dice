@@ -1,7 +1,7 @@
 # ogiri-dice
 
 大喜利の回答を Gemini が採点し、スコア分だけ東京マップ(すごろく)を進むブラウザゲーム。
-現状: Web版を公開済み。オンラインは共通お題30秒・固定順移動、ローカルと追加お題は15秒。
+現状: Web版を公開済み。オンライン・ローカルとも共通お題30秒・固定順移動。追加お題は15秒。
 設計思想: 状態遷移の正しさは reducer + テストで担保し、UI は描画に徹する。
 旧 Unity 実装(`GameCanvas-Unity-master/`)は参照専用 — 触らない。
 
@@ -58,7 +58,7 @@ cd worker && npm test          # Worker 純ロジックのテスト
 
 ## 正典ドキュメント
 
-- オンライン通常回答: `docs/superpowers/specs/2026-09-26-shared-round-design.md`（共通30秒・P1から固定順）
+- 両モードの通常回答: `docs/superpowers/specs/2026-09-26-shared-round-design.md`（共通30秒・P1から固定順）
 - 部屋・同期: `docs/superpowers/specs/2026-09-26-online-multiplayer-design.md`
 - 基本ルール: `docs/superpowers/specs/2026-07-08-ogiri-dice-v2-tokyo-map-design.md`
 - 技術基盤: `docs/superpowers/specs/2026-07-07-ogiri-dice-web-redesign-design.md`(Worker/エラー処理/デプロイ)
