@@ -18,8 +18,10 @@ export async function callGemini(
   apiKey: string,
   prompt: string,
   schema: object,
+  signal?: AbortSignal,
 ): Promise<unknown> {
   const res = await fetch(API_URL, {
+    signal,
     method: "POST",
     headers: {
       "Content-Type": "application/json",

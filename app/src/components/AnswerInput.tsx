@@ -4,11 +4,13 @@ interface Props {
   disabled: boolean;
   cpuAnswer: string | null; // CPU手番のとき表示する回答(編集不可)
   onSubmit: (answer: string) => void;
+  preserveDraft?: boolean;
+  maxLength?: number;
 }
 
-export function AnswerInput({ disabled, cpuAnswer, onSubmit }: Props) {
+export function AnswerInput({ disabled, cpuAnswer, onSubmit, preserveDraft = false, maxLength = 100 }: Props) {
   const [text, setText] = useState("");
-  useEffect(() => setText(""), [disabled]); // 手番が変わったらクリア
+  useEffect(() => { if (!preserveDraft) setText(""); }, [disabled, preserveDraft]);
 
   if (cpuAnswer !== null) {
     return (
@@ -28,9 +30,11 @@ export function AnswerInput({ disabled, cpuAnswer, onSubmit }: Props) {
     <div className="answer-form">
       <input
         type="text"
-        placeholder="ボケを入力…(100文字まで)"
+        aria-label="あなたの回答"
+        enterKeyHint="send"
+        placeholder={`ボケを入力…(${maxLength}文字まで)`}
         value={text}
-        maxLength={100}
+        maxLength={maxLength}
         disabled={disabled}
         onChange={(e) => setText(e.target.value)}
         onKeyDown={(e) => {

@@ -1,4 +1,6 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+// Unit tests cover the HTTP handler; workerd integration tests exercise the real DO.
+vi.mock('cloudflare:workers', () => ({ DurableObject: class {} }));
 import handler from "./index";
 
 const env = { GEMINI_API_KEY: "dummy" };

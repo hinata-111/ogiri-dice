@@ -1,0 +1,81 @@
+{
+  "source": {
+    "score_sha256": "dfdf71257eaecc9b333aa9eedd199ceab30cc1b8c6f139c9908978e6494256a6",
+    "engine_sha256": "9e76ab1482191bad09af2afc1901799304ce8efd4cd5baa6f9b494fbaeae16d0"
+  },
+  "note": "Existing score and sampler; offline auditions omit the final compressor, scene ducking, and effects. RMS matched within each scene. Natural ending, not seamless loops.",
+  "tracks": [
+    {
+      "file": "board-original.wav",
+      "scene": "board",
+      "variant": "original",
+      "bpm": 104,
+      "duration_seconds": 37.63,
+      "melody_unchanged": true,
+      "notes": 331,
+      "melody_notes": 43,
+      "rms_dbfs": -28.65,
+      "peak_dbfs": -14.46
+    },
+    {
+      "file": "board-soft.wav",
+      "scene": "board",
+      "variant": "soft",
+      "bpm": 104,
+      "duration_seconds": 37.63,
+      "melody_unchanged": true,
+      "notes": 331,
+      "melody_notes": 43,
+      "rms_dbfs": -28.65,
+      "peak_dbfs": -14.65
+    },
+    {
+      "file": "board-calm.wav",
+      "scene": "board",
+      "variant": "calm",
+      "bpm": 96,
+      "duration_seconds": 40.71,
+      "melody_unchanged": true,
+      "notes": 171,
+      "melody_notes": 43,
+      "rms_dbfs": -28.65,
+      "peak_dbfs": -13.24
+    },
+    {
+      "file": "menu-original.wav",
+      "scene": "menu",
+      "variant": "original",
+      "bpm": 116,
+      "duration_seconds": 33.81,
+      "melody_unchanged": true,
+      "notes": 350,
+      "melody_notes": 62,
+      "rms_dbfs": -27,
+      "peak_dbfs": -15.09
+    },
+    {
+      "file": "menu-soft.wav",
+      "scene": "menu",
+      "variant": "soft",
+      "bpm": 116,
+      "duration_seconds": 33.81,
+      "melody_unchanged": true,
+      "notes": 350,
+      "melody_notes": 62,
+      "rms_dbfs": -27,
+      "peak_dbfs": -15.2
+    },
+    {
+      "file": "menu-calm.wav",
+      "scene": "menu",
+      "variant": "calm",
+      "bpm": 108,
+      "duration_seconds": 36.27,
+      "melody_unchanged": true,
+      "notes": 190,
+      "melody_notes": 62,
+      "rms_dbfs": -27,
+      "peak_dbfs": -14.92
+    }
+  ]
+}

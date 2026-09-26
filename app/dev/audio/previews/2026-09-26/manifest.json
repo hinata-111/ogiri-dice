@@ -1,0 +1,35 @@
+[
+  {
+    "file": "a-lobby-piano.wav",
+    "title": "開演前のロビー",
+    "bpm": 72,
+    "duration_seconds": 28.67,
+    "notes": 58,
+    "peak_dbfs": -10.07,
+    "active_rms_dbfs": -24.0,
+    "energy_above_4khz_percent": 0.0,
+    "description": "フェルトピアノ系。打楽器なし。長めの音と休符を中心にした最も穏やかな案。"
+  },
+  {
+    "file": "b-tokyo-guitar.wav",
+    "title": "昼下がりの東京",
+    "bpm": 80,
+    "duration_seconds": 26.0,
+    "notes": 71,
+    "peak_dbfs": -10.01,
+    "active_rms_dbfs": -24.0,
+    "energy_above_4khz_percent": 0.0,
+    "description": "ナイロンギター系。指弾きの柔らかい刻みで、静かさと街歩きの軽さを両立。"
+  },
+  {
+    "file": "c-green-room-mallet.wav",
+    "title": "出番待ちの楽屋",
+    "bpm": 88,
+    "duration_seconds": 23.82,
+    "notes": 102,
+    "peak_dbfs": -9.58,
+    "active_rms_dbfs": -24.0,
+    "energy_above_4khz_percent": 0.0,
+    "description": "丸い木琴とエレピ系。音を短く、休符を多くして控えめなゲームらしい弾みを残す。"
+  }
+]

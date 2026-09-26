@@ -1,0 +1,8 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>大喜利ダイス · 小画面レビュー</title>
+<style>body{margin:0;padding:14px;background:#263e48;color:#fff8e6;font:13px sans-serif}header{display:flex;align-items:center;gap:24px;height:38px}h1{font-size:16px}main{display:flex;gap:18px}section{width:390px;flex-shrink:0}h2{font-size:12px;font-weight:400}iframe{display:block;width:390px;height:640px;border:0;background:#fff8e6;box-shadow:0 4px 15px #0003}</style></head>
+<body><header><h1>小画面レビュー</h1><span>各画面は実際のアプリ · 390 × 640px</span></header><main>
+<section><h2>タイトル・プレイヤー設定</h2><iframe title="ローカル画面" src="/"></iframe></section>
+<section><h2>オンラインの入口</h2><iframe title="オンライン画面" src="/"></iframe></section>
+<section><h2>場面 <select aria-label="イベントの場面" onchange="document.getElementById('event-frame').src='/dev/scenes.html?scene='+this.value"><option value="answer">回答発表</option><option value="shared">全員発表</option><option value="lobby">待機室</option><option value="arrival">到着</option><option value="blue">青マス</option><option value="red">赤マス</option><option value="reward">賞金結果</option><option value="loss">減額結果</option><option value="fallback">採点失敗</option><option value="final">最終順位</option></select></h2><iframe id="event-frame" title="イベント画面" src="/dev/scenes.html"></iframe></section>
+</main></body></html>
