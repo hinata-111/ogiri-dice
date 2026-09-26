@@ -10,31 +10,33 @@ interface Props {
 }
 
 const fmt = (n: number) => `${Math.round(n / 10000)}万円`;
-const MEDALS = ["🥇", "🥈", "🥉", "4位"];
 
 export function GameResultScreen({ players, bestAnswers, winnerId, winMoney, onRestart }: Props) {
   const ranked = rankPlayers(players);
   const winner = winnerId !== null ? players.find((p) => p.id === winnerId) : ranked[0];
   return (
     <div className="overlay">
-      <div className="panel">
-        <h2>🎭 結果発表</h2>
-        <p style={{ margin: "8px 0" }}>
+      <section className="panel final-panel">
+        <header className="winner-summary">
+        <p className="eyebrow">東京大喜利の旅・結果発表</p>
+        <h2 aria-label={`${winner?.name}、優勝！`}><span className="winner-name">{winner?.name}</span><span className="winner-title">優勝！</span></h2>
+        <p className="winner-caption">
           {winnerId !== null
             ? `${winner?.name} が${winMoney / 10000}万円達成で優勝！`
             : `規定周回終了！ 最多所持金の ${winner?.name} が優勝！`}
         </p>
+        </header>
         <ol className="rank-list">
           {ranked.map((p, i) => (
             <li key={p.id}>
-              <span>{MEDALS[i] ?? `${i + 1}位`} {p.name}</span>
-              <span>{fmt(p.money)} ／ 🏁×{p.arrivals}</span>
+              <span className="rank-number">{i+1}<small>位</small></span><span className="rank-name">{p.name}</span>
+              <span className="rank-money">{fmt(p.money)}<small>目的地に{p.arrivals}回到着</small></span>
             </li>
           ))}
         </ol>
         {bestAnswers.length > 0 && (
-          <div className="best-answers">
-            <h3 style={{ marginBottom: 8 }}>✨ 今日のベスト回答</h3>
+          <details className="best-answers" open>
+            <summary>今日のベスト回答を振り返る（{bestAnswers.length}件）</summary>
             {bestAnswers.map((b, i) => (
               <div className="item" key={i}>
                 <div style={{ opacity: 0.7 }}>{b.topicPrompt}</div>
@@ -44,12 +46,12 @@ export function GameResultScreen({ players, bestAnswers, winnerId, winMoney, onR
                 <div style={{ opacity: 0.8 }}>{b.comment}</div>
               </div>
             ))}
-          </div>
+          </details>
         )}
-        <div style={{ marginTop: 16, textAlign: "center" }}>
+        <div className="final-actions">
           <button className="primary" onClick={onRestart}>タイトルへ戻る</button>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

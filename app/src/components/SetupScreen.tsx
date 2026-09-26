@@ -37,46 +37,52 @@ export function SetupScreen({ onSubmit }: Props) {
     );
 
   return (
-    <div className="overlay">
-      <div className="panel">
-        <h2 style={{ marginBottom: 14 }}>プレイヤー設定(1〜4人)</h2>
+    <div className="overlay setup-overlay">
+      <div className="panel setup-panel">
+        <h2>プレイヤー設定(1〜4人)</h2>
+        <div className="setup-rows">
         {rows.map((r, i) => (
           <div className="setup-row" key={i}>
+            <strong className={`setup-player-number player-color-${i}`}>{i+1}<small>人目</small></strong>
             <input
               type="text"
+              aria-label={`プレイヤー${i+1}の名前`}
               value={r.name}
               maxLength={10}
               onChange={(e) => update(i, { name: e.target.value })}
             />
             <select
               value={r.kind}
+              aria-label={`プレイヤー${i+1}の操作`}
               onChange={(e) => update(i, { kind: e.target.value as PlayerKind })}
             >
-              <option value="human">人間</option>
-              <option value="cpu">CPU</option>
+              <option value="human">自分で操作</option>
+              <option value="cpu">CPUにおまかせ</option>
             </select>
             {r.kind === "cpu" && (
               <select
                 value={r.personality}
+                aria-label={`プレイヤー${i+1}の性格`}
                 onChange={(e) => update(i, { personality: e.target.value as CpuPersonality })}
               >
-                <option value="safe">無難</option>
-                <option value="bold">攻める</option>
+                <option value="safe">性格：堅実</option>
+                <option value="bold">性格：攻める</option>
               </select>
             )}
             {rows.length > 1 && (
-              <button className="ghost" onClick={() => removeRow(i)}>
+              <button className="ghost" aria-label={`プレイヤー${i+1}を外す`} onClick={() => removeRow(i)}>
                 ✕
               </button>
             )}
           </div>
         ))}
+        </div>
+        <div className="setup-footer">
         {rows.length < 4 && (
-          <button className="ghost" onClick={addRow} style={{ marginBottom: 14 }}>
+          <button className="ghost" onClick={addRow}>
             ＋ プレイヤー追加
           </button>
         )}
-        <div>
           <button className="primary" onClick={submit}>
             ゲーム開始！
           </button>

@@ -28,6 +28,8 @@ export function AnswerInput({ disabled, cpuAnswer, onSubmit }: Props) {
     <div className="answer-form">
       <input
         type="text"
+        aria-label="あなたの回答"
+        enterKeyHint="send"
         placeholder="ボケを入力…(100文字まで)"
         value={text}
         maxLength={100}

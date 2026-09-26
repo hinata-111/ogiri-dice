@@ -14,7 +14,7 @@ export function TopicCard({ topic, judging, context }: Props) {
     : null;
   return (
     <div className={`topic-card${judging ? " judging" : ""}`}>
-      {banner && <div className="category" style={{ fontWeight: 700 }}>{banner}</div>}
+      {banner && <div className="category challenge-banner" style={{ fontWeight: 700 }}>{banner}</div>}
       <div className="category">{topic.category}</div>
       <div className="prompt">{judging ? "審査中…！" : topic.prompt}</div>
     </div>
