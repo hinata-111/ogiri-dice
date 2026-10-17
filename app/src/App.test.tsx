@@ -9,7 +9,7 @@ beforeEach(()=>{
 });
 afterEach(()=>{cleanup();vi.useRealTimers();vi.unstubAllGlobals();vi.restoreAllMocks()});
 
-it('人の手番はお題を見るまで待ち、開始後だけ15秒で時間切れになる',()=>{
+it('人の手番はお題を見るまで待ち、開始後だけ30秒で時間切れになる',()=>{
   render(<App/>);
   fireEvent.click(screen.getByRole('button',{name:'はじめる'}));
   fireEvent.click(screen.getByRole('button',{name:'ゲーム開始！'}));
@@ -21,9 +21,11 @@ it('人の手番はお題を見るまで待ち、開始後だけ15秒で時間�
   expect(document.activeElement).toBe(screen.getByLabelText('あなたの回答'));
   expect(document.querySelector('.tokyo-board')?.closest('[inert]')).toBeTruthy();
   act(()=>vi.advanceTimersByTime(16000));
+  expect(screen.getByLabelText('あなたの回答')).toBeTruthy();
+  act(()=>vi.advanceTimersByTime(15000));
   expect(screen.queryByLabelText('あなたの回答')).toBeNull();
   act(()=>vi.advanceTimersByTime(3000));
-  expect(screen.getByRole('button',{name:'1マス進む！'})).toBeTruthy();
+  expect(screen.getByRole('list',{name:'全員の回答と歩数'}).textContent).toContain('1マス');
 });
 
 it('回答・進路選択・3回の到着を経て100万円の優勝からタイトルへ戻れる',async()=>{
@@ -38,7 +40,7 @@ it('回答・進路選択・3回の到着を経て100万円の優勝からタイ
     fireEvent.change(screen.getByLabelText('あなたの回答'),{target:{value:'改札が座布団を配っている'}});
     await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'送信！'}));});
     act(()=>vi.advanceTimersByTime(1000));
-    fireEvent.click(screen.getByRole('button',{name:'6マス進む！'}));
+    act(()=>vi.advanceTimersByTime(5000));
     expect(document.querySelector('.tokyo-board')?.closest('[inert]')).toBeNull();
     expect(document.querySelector('.route-comparison')?.textContent).toContain('目的地まで');
     for(let i=0;i<steps;i++){
@@ -72,4 +74,29 @@ it('設定では名前入力を自動起動せず開始ボタンへフォーカ�
   render(<App/>);
   fireEvent.click(screen.getByRole('button',{name:'はじめる'}));
   expect(document.activeElement).toBe(screen.getByRole('button',{name:'ゲーム開始！'}));
+});
+
+it('人間とCPUが共通のお題に回答し、全員採点後にプレイヤー1から移動する', async () => {
+  render(<App/>);
+  fireEvent.click(screen.getByRole('button',{name:'はじめる'}));
+  fireEvent.click(screen.getByRole('button',{name:'ゲーム開始！'}));
+  fireEvent.click(screen.getByRole('button',{name:'お題を見る'}));
+  expect(screen.getByText('あと 30 秒')).toBeTruthy();
+  fireEvent.change(screen.getByLabelText('あなたの回答'),{target:{value:'人間の回答'}});
+  await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'送信！'}));});
+  await act(async()=>{vi.advanceTimersByTime(3000);});
+  expect(screen.getByRole('list',{name:'全員の回答と歩数'}).textContent).toMatch(/プレイヤー1.*人間の回答.*ロボ作家.*確認用回答/s);
+  act(()=>vi.advanceTimersByTime(5000));
+  expect(document.querySelector('[data-phase="moving"]')).toBeTruthy();
+  expect(screen.getByRole('button',{name:/^A .*を選ぶ$/})).toBeTruthy();
+});
+
+it('同じ端末の複数人にも共通の30秒で入力欄を用意する', () => {
+  render(<App/>);
+  fireEvent.click(screen.getByRole('button',{name:'はじめる'}));
+  fireEvent.change(screen.getByLabelText('プレイヤー2の操作'),{target:{value:'human'}});
+  fireEvent.click(screen.getByRole('button',{name:'ゲーム開始！'}));
+  fireEvent.click(screen.getByRole('button',{name:'お題を見る'}));
+  expect(screen.getAllByLabelText('あなたの回答')).toHaveLength(2);
+  expect(screen.getAllByText('あと 30 秒')).toHaveLength(1);
 });

@@ -6,12 +6,13 @@ import { currentPlayer, gameReducer, initialState } from "./game/state";
 import { pickRandomTopic } from "./game/topics";
 import { pickDestination } from "./game/destination";
 import { buildNodeMap, nextStepToward } from "./game/graph";
-import { ANSWER_TIME_LIMIT_MS } from "./game/rules";
+import { ANSWER_TIME_LIMIT_MS, ONLINE_ROUND_ANSWER_MS, ONLINE_RESULT_MS } from "./game/rules";
 import mapData from "./data/map.json";
 import topicsData from "./data/topics.json";
 import type { MapNode, PlayerConfig, Topic } from "./game/types";
 import { createEvaluator } from "./ai";
 import { useCountdown } from "./hooks/useCountdown";
+import { useLocalRound } from './hooks/useLocalRound';
 import {
   ARRIVAL_MS, CAMERA_SETTLE_MS, CHALLENGE_INTRO_MS, CPU_SUBMIT_DELAY_MS, MOVE_STEP_MS,
 } from "./ui/constants";
@@ -27,14 +28,15 @@ function LocalGame({ onOnline }: { onOnline: () => void }) {
   const phase = state.phase;
   const player = state.players.length > 0 ? currentPlayer(state) : null;
   const isCpuTurn = player?.kind === "cpu";
+  useLocalRound(state, evaluator, dispatch);
   // turnStart: カメラ移動を待ってお題
   useEffect(() => {
-    if (phase.name !== "turnStart" || !isCpuTurn) return;
+    if (phase.name !== "turnStart" || state.players.some(p => p.kind === 'human')) return;
     const t = setTimeout(() => {
-      dispatch({ type: "BEGIN_TURN", topic: pickRandomTopic(topics, state.usedTopicIds) });
+      dispatch({ type: "BEGIN_ROUND", topic: pickRandomTopic(topics, state.usedTopicIds) });
     }, CAMERA_SETTLE_MS);
     return () => clearTimeout(t);
-  }, [phase, state.usedTopicIds, isCpuTurn]);
+  }, [phase, state.usedTopicIds, state.players]);
 
   // challengeIntro: 告知後にチャレンジお題(赤は目標値1〜4)
   useEffect(() => {
@@ -100,21 +102,28 @@ function LocalGame({ onOnline }: { onOnline: () => void }) {
     return () => clearTimeout(t);
   }, [phase, isCpuTurn]);
 
-  const timerActive = phase.name === "awaitingAnswer" && !isCpuTurn;
-  const remaining = useCountdown(timerActive, ANSWER_TIME_LIMIT_MS, () =>
-    dispatch({ type: "TIME_UP" }),
+  useEffect(() => {
+    if (phase.name !== 'showingResult' || !isCpuTurn) return;
+    const timer = setTimeout(() => dispatch({ type: 'PROCEED' }), ONLINE_RESULT_MS);
+    return () => clearTimeout(timer);
+  }, [phase, isCpuTurn]);
+
+  const timerActive = phase.name === "awaitingAnswer" || phase.name === 'roundAnswering';
+  const remaining = useCountdown(timerActive, phase.name === 'roundAnswering' ? ONLINE_ROUND_ANSWER_MS : ANSWER_TIME_LIMIT_MS, () =>
+    dispatch({ type: phase.name === 'roundAnswering' ? 'CLOSE_ROUND' : 'TIME_UP' }),
   );
 
   const startGame = (players: PlayerConfig[]) =>
     dispatch({
       type: "START_GAME",
+      simultaneous: true,
       players,
       nodes,
       startId: START_ID,
       destinationId: pickDestination(nodes, [START_ID]),
     });
 
-  return <GameView state={state} dispatch={dispatch} remaining={remaining} cpuAnswer={cpuAnswer} startGame={startGame} onOnline={onOnline}/>;
+  return <GameView state={state} dispatch={dispatch} remaining={remaining} cpuAnswer={cpuAnswer} startGame={startGame} onOnline={onOnline} canAct={phase.name === 'roundAnswering' || !isCpuTurn}/>;
 }
 
 function GameRouter() {

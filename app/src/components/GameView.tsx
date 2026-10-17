@@ -31,7 +31,7 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
   const stage = useRef<HTMLDivElement>(null);
   const phase = state.phase;
   const shared = state.sharedRound;
-  const myEntry = shared?.entries.find(e => e.playerId === playerId);
+  const answerEntries = shared?.entries.filter(e => online ? e.playerId === playerId : state.players.find(p => p.id === e.playerId)?.kind === 'human') ?? [];
   const nodes = state.nodes;
   const topics = topicsData.topics as Topic[];
   const player = state.players.length ? currentPlayer(state) : null;
@@ -66,7 +66,7 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
       )}
       {phase.name === "setup" && startGame && <SetupScreen onSubmit={startGame} />}
 
-      {phase.name === "turnStart" && <div className="overlay turn-overlay"><section className="panel turn-panel" key={`${state.round}:${player?.id}`}><span className="turn-ticket">第{state.round}周{!state.simultaneous && ` · ${(player?.id??0)+1}番`}</span><PlayerToken color={playerColors[(player?.id??0)%4]} number={state.simultaneous ? undefined : (player?.id??0)+1}/><p className="eyebrow">さあ、ひとボケいこう！</p><h2>{state.simultaneous ? 'みんなで同じお題に挑戦！' : `${player?.name}の番！`}</h2><p>目指すは <b>{destination?.name}</b>。次の出番を目指そう。</p>{!online&&!isCpuTurn ? <button className="primary" onClick={()=>dispatch({type:'BEGIN_TURN',topic:pickRandomTopic(topics,state.usedTopicIds)})}>お題を見る</button> : <p className="event-note">まもなくお題を発表します</p>}</section></div>}
+      {phase.name === "turnStart" && <div className="overlay turn-overlay"><section className="panel turn-panel" key={`${state.round}:${player?.id}`}><span className="turn-ticket">第{state.round}周{!state.simultaneous && ` · ${(player?.id??0)+1}番`}</span><PlayerToken color={playerColors[(player?.id??0)%4]} number={state.simultaneous ? undefined : (player?.id??0)+1}/><p className="eyebrow">さあ、ひとボケいこう！</p><h2>{state.simultaneous ? 'みんなで同じお題に挑戦！' : `${player?.name}の番！`}</h2><p>目指すは <b>{destination?.name}</b>。次の出番を目指そう。</p>{!online&&state.players.some(p => p.kind === 'human') ? <button className="primary" onClick={()=>dispatch({type:state.simultaneous ? 'BEGIN_ROUND' : 'BEGIN_TURN',topic:pickRandomTopic(topics,state.usedTopicIds)})}>お題を見る</button> : <p className="event-note">まもなくお題を発表します</p>}</section></div>}
 
       {shared && (phase.name === 'roundAnswering' || phase.name === 'roundEvaluating' || phase.name === 'roundResults') && (
         <section className={`answer-window shared-round-window ${phase.name === 'roundResults' ? 'shared-result-window' : ''}`} tabIndex={-1} aria-label="全員共通のお題">
@@ -75,9 +75,11 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
           {phase.name === 'roundAnswering' && <>
             <div className="timer-bar"><div className="fill" style={{ width: `${Math.max(0, Math.min(100, remaining / ONLINE_ROUND_ANSWER_MS * 100))}%` }}/></div>
             <p className="shared-round-status" role="status">{shared.entries.filter(e => e.submitted).length} / {state.players.length}人が提出済み</p>
-            {myEntry?.submitted ? <p>回答を提出しました。みんなの回答を待っています。</p> : myEntry && <AnswerInput
-              key={`round:${state.round}:${playerId}`} preserveDraft maxLength={120} cpuAnswer={null} disabled={!canAct || remaining <= 0}
-              onSubmit={answer => dispatch({ type: 'SUBMIT_ROUND_ANSWER', round: state.round, playerId: myEntry.playerId, answer })}/>}</>}
+            <div className="shared-answer-inputs">{answerEntries.map(myEntry => <section key={myEntry.playerId} aria-label={`${state.players.find(p => p.id === myEntry.playerId)?.name}の回答欄`}>
+            {!online && answerEntries.length > 1 && <strong>{state.players.find(p => p.id === myEntry.playerId)?.name}</strong>}
+            {myEntry.submitted ? <p>回答を提出しました。みんなの回答を待っています。</p> : <AnswerInput
+              key={`round:${state.round}:${myEntry.playerId}`} preserveDraft maxLength={120} cpuAnswer={null} disabled={!canAct || remaining <= 0}
+              onSubmit={answer => dispatch({ type: 'SUBMIT_ROUND_ANSWER', round: state.round, playerId: myEntry.playerId, answer })}/>}</section>)}</div></>}
           {phase.name === 'roundEvaluating' && <p role="status">みんなの回答を採点しています…</p>}
           {phase.name === 'roundResults' && <>
             <ol className="shared-round-results" aria-label="全員の回答と歩数">{shared.entries.map(e => <li key={e.playerId}>
