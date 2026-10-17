@@ -9,6 +9,7 @@ import { buildArtLayout } from './art-layout';
 import { placeChoices } from './choice-layout';
 import { PlayerToken } from '../../presentation/StageArt';
 import { playerColors } from '../../presentation/palette';
+import { GoalArch } from './GoalArch';
 
 const colors=playerColors;
 const cellNames={normal:'通常マス',blue:'賞金チャレンジ',red:'減額回避チャレンジ'};
@@ -31,6 +32,7 @@ export function TokyoBoard({state,onStep,canAct=true}:{state:GameState;onStep:(i
   const graph=useMemo(()=>buildNodeMap(state.nodes),[state.nodes]);
   const layout=useMemo(()=>buildArtLayout(state.nodes),[state.nodes]);
   const points=layout.points;
+  const goal=phase.name!=='gameResult'&&state.destinationId?graph.get(state.destinationId):undefined;
   useLayoutEffect(()=>{const node=root.current;if(!node)return;const observer=new ResizeObserver(()=>setSize({width:node.clientWidth,height:node.clientHeight}));observer.observe(node);return()=>observer.disconnect()},[]);
   const distance=(from:string,to:string)=>{const queue:[string,number][]=[[from,0]],seen=new Set([from]);for(let i=0;i<queue.length;i++){const [id,d]=queue[i];if(id===to)return d;for(const next of graph.get(id)!.neighbors)if(!seen.has(next)){seen.add(next);queue.push([next,d+1])}}return 0};
   const describe=(id:string)=>graph.get(id)!.name||cellNames[graph.get(id)!.cell];
@@ -73,7 +75,8 @@ export function TokyoBoard({state,onStep,canAct=true}:{state:GameState;onStep:(i
         {state.nodes.map(n=>{const p=points.get(n.id)!,w=n.name?21:17;return <g key={n.id} transform={`translate(${p[0]*10} ${p[1]*5.625})`}><g transform="rotate(-20)"><rect className="tokyo-cell-base" x={-w/2} y={-5} width={w} height={13} rx="2"/><rect x={-w/2} y={-8} width={w} height={13} rx="2" className={`tokyo-cell ${n.cell} ${n.name?'hub':''}`}/></g>{n.cell!=='normal'&&<text className="tokyo-cell-symbol" x="0" y="-1">{n.cell==='blue'?'+':'!'}</text>}</g>})}
         {view==='current'&&choices.map(c=><path key={`guide-${c.id}`} d={`M${c.cx*10} ${c.cy*5.625}L${c.bx*10} ${c.by*5.625}`} fill="none" stroke="#174c6b" strokeWidth="2" strokeDasharray="3 3"/>)}
       </svg>
-      {state.nodes.filter(n=>n.name&&(!overview||!overviewFit||n.id===state.destinationId||n.id===player.position)).map(n=>{const p=points.get(n.id)!;return <span key={n.id} className={`tokyo-label ${n.id===state.destinationId?'goal':''}`} style={{left:`${p[0]}%`,top:`${p[1]}%`,transform:state.players.filter(player=>player.position===n.id).length>1?'translate(-50%,24px)':undefined}}>{n.id===state.destinationId?'⚑ ':''}{n.name}</span>})}
+      {state.nodes.filter(n=>n.name&&n.id!==goal?.id&&(!overview||!overviewFit||n.id===state.destinationId||n.id===player.position)).map(n=>{const p=points.get(n.id)!;return <span key={n.id} className="tokyo-label" style={{left:`${p[0]}%`,top:`${p[1]}%`,transform:state.players.filter(player=>player.position===n.id).length>1?'translate(-50%,24px)':undefined}}>{n.name}</span>})}
+      {goal&&<GoalArch name={goal.name} point={points.get(goal.id)!}/>}
       {overview&&<span className="overview-current" style={{left:`${px}%`,top:`${py}%`}}>現在地</span>}
       {state.players.filter((p,i,all)=>!overview||all.findIndex(v=>v.position===p.position)===i).map(p=>{const pos=points.get(p.position)!,group=state.players.filter(v=>v.position===p.position),slot=group.findIndex(v=>v.id===p.id),offset=group.length>1?[[-19,-12],[19,-12],[-19,18],[19,18]][slot]:[0,0];return <div key={p.id} role="img" aria-label={`${p.name}：${describe(p.position)}${p.id===player.id?'、現在の手番':''}`} className={`tokyo-pawn ${group.length>1?'shared':''}`} style={{left:`${pos[0]}%`,top:`${pos[1]}%`,'--ox':`${offset[0]}px`,'--oy':`${offset[1]}px`} as CSSProperties}><PlayerToken color={colors[p.id%4]} number={p.id+1}/>{overview&&group.length>1&&<small className="pawn-group-count">{group.length}人</small>}</div>})}
       {view==='current'&&choices.map((c,i)=><button key={c.id} className="tokyo-choice" aria-label={`${String.fromCharCode(65+i)} ${describe(c.id)}を選ぶ`} aria-pressed={selected===c.id} style={{left:`${c.bx}%`,top:`${c.by}%`}} onClick={()=>setSelection({from:player.position,id:c.id})}>{String.fromCharCode(65+i)}</button>)}
