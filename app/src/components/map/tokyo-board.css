@@ -80,6 +80,8 @@
 .tokyo-board .tokyo-cell-target:hover:not(:disabled){background:transparent}
 .tokyo-board .tokyo-cell-target:focus-visible{outline:3px solid #075b60;outline-offset:1px;box-shadow:0 0 0 3px #fff}
 .tokyo-cell.can-step{stroke:#075b60;stroke-width:3;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 4px #64f5dd)}
+.tokyo-cell.goal{fill:#f8cf4e;stroke:#fff3b0;stroke-width:2;filter:drop-shadow(0 0 3px #fff0a2) drop-shadow(0 0 7px #ffbd32b3)}
+.tokyo-cell.goal.can-step{stroke:#075b60;stroke-width:3}
 .tokyo-move-hint{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));left:16px;max-width:calc(100% - 260px);margin:0;padding:8px 12px;border:1px solid #536679;border-radius:6px;background:#faf9f2e8;font-size:13px;pointer-events:none}
 @media(max-width:600px) and (min-height:500px){.tokyo-move-hint{left:12px;right:12px;max-width:none;text-align:center;font-size:12px}}
 .tokyo-board .tokyo-cell-inspect:hover,.tokyo-board .tokyo-cell-inspect[aria-pressed=true]{background:#ffcf3355;outline:2px solid #fff}
