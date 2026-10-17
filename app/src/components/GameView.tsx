@@ -39,10 +39,10 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
   const nodeMap = useMemo(() => buildNodeMap(nodes), [nodes]);
   const timerActive = phase.name === 'awaitingAnswer' && (!isCpuTurn || online);
   useLayoutEffect(() => {
-    const target = ['.answer-form input:not([readonly]):not(:disabled)', '.overlay .primary:not(:disabled)', '.setup-footer .primary', '.title-screen .primary', '.result-body', '.answer-window', '.tokyo-choice']
+    const target = ['.answer-form input:not([readonly]):not(:disabled)', '.overlay .primary:not(:disabled)', '.setup-footer .primary', '.title-screen .primary', '.result-body', '.answer-window', '.tokyo-cell-move']
       .map(selector => stage.current?.querySelector<HTMLElement>(selector)).find(Boolean);
     target?.focus({ preventScroll: true });
-  }, [phase.name]);
+  }, [phase.name, state.currentPlayerIndex, player?.position, canAct]);
   const inGame = !["title", "setup"].includes(phase.name);
   const destination = state.destinationId ? (nodeMap.get(state.destinationId) ?? null) : null;
   const stateClass =

@@ -34,7 +34,7 @@ it('回答・進路選択・3回の到着を経て100万円の優勝からタイ
   fireEvent.click(screen.getByRole('button',{name:'はじめる'}));
   fireEvent.click(screen.getByRole('button',{name:'プレイヤー2を外す'}));
   fireEvent.click(screen.getByRole('button',{name:'ゲーム開始！'}));
-  // Deterministic destinations: 新宿→高円寺→中野→高円寺. These routes each use candidate A.
+  // Deterministic destinations: 新宿→高円寺→中野→高円寺. Follow the first legal adjacent cell.
   for(const [arrivalIndex,steps] of [5,3,3].entries()){
     fireEvent.click(screen.getByRole('button',{name:'お題を見る'}));
     fireEvent.change(screen.getByLabelText('あなたの回答'),{target:{value:'改札が座布団を配っている'}});
@@ -42,10 +42,11 @@ it('回答・進路選択・3回の到着を経て100万円の優勝からタイ
     act(()=>vi.advanceTimersByTime(1000));
     act(()=>vi.advanceTimersByTime(5000));
     expect(document.querySelector('.tokyo-board')?.closest('[inert]')).toBeNull();
-    expect(document.querySelector('.route-comparison')?.textContent).toContain('目的地まで');
+    expect(screen.getByText('光っている隣のマスをタップ')).toBeTruthy();
+    expect(document.activeElement?.classList.contains('tokyo-cell-move')).toBe(true);
     for(let i=0;i<steps;i++){
-      fireEvent.click(screen.getByRole('button',{name:/^A .*を選ぶ$/}));
-      fireEvent.click(screen.getByRole('button',{name:'決定'}));
+      fireEvent.click(screen.getAllByRole('button',{name:/へ進む$/})[0]);
+      if(i<steps-1)expect(document.activeElement?.classList.contains('tokyo-cell-move')).toBe(true);
     }
     expect(screen.getByText(/到着ボーナス/)).toBeTruthy();
     const receipt=screen.getByLabelText('所持金の変化');
@@ -88,7 +89,7 @@ it('人間とCPUが共通のお題に回答し、全員採点後にプレイヤ�
   expect(screen.getByRole('list',{name:'全員の回答と歩数'}).textContent).toMatch(/プレイヤー1.*人間の回答.*ロボ作家.*確認用回答/s);
   act(()=>vi.advanceTimersByTime(5000));
   expect(document.querySelector('[data-phase="moving"]')).toBeTruthy();
-  expect(screen.getByRole('button',{name:/^A .*を選ぶ$/})).toBeTruthy();
+  expect(screen.getAllByRole('button',{name:/へ進む$/}).length).toBeGreaterThan(0);
 });
 
 it('同じ端末の複数人にも共通の30秒で入力欄を用意する', () => {

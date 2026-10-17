@@ -1,28 +1,28 @@
 .tokyo-board{position:absolute;inset:0;overflow:clip;background:#7296a2;color:#183c59;font-weight:700;isolation:isolate}
 .tokyo-camera{position:absolute;left:0;top:0;transition:transform 280ms ease}
 .tokyo-art,.tokyo-routes{position:absolute;inset:0;width:100%;height:100%}.tokyo-art{filter:saturate(.72) contrast(.94)}
-.tokyo-routes{overflow:visible;pointer-events:none}.tokyo-track{stroke:#fffbdc;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 0 #183c59)}.tokyo-track.selected{stroke:#ffcf35;stroke-width:8}
+.tokyo-routes{overflow:visible;pointer-events:none}.tokyo-track{stroke:#fffbdc;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 0 #183c59)}
 .tokyo-cell{fill:#fffdf2;stroke:#294858;stroke-width:2}.tokyo-cell.blue{fill:#45b9e9}.tokyo-cell.red{fill:#e57177}.tokyo-cell.hub{fill:#fff0ac}
 .tokyo-label{position:absolute;transform:translate(-50%,6px);border:1px solid #214660;border-bottom:3px solid #214660;border-radius:3px;background:#fffdf2;color:#163b51;padding:2px 7px;font-size:clamp(10px,1.3vw,15px);font-weight:900;white-space:nowrap;box-shadow:0 1px 0 #fff,0 2px 4px #183c5940}.tokyo-label.goal{background:#ffda48;border-color:#775820;box-shadow:0 0 0 2px #fff9d6}
 .tokyo-pawn{position:absolute;width:38px;height:52px;pointer-events:none;transform:translate(calc(-50% + var(--ox)),calc(-100% + var(--oy)));transform-origin:bottom center;filter:drop-shadow(0 1px 1px #fff) drop-shadow(0 3px 2px #19395199);transition:left 260ms ease,top 260ms ease;z-index:2}.tokyo-pawn.shared{transform:translate(calc(-50% + var(--ox)),calc(-100% + var(--oy))) scale(.72)}
 .tokyo-board button{min-height:44px;border:2px solid #173f5b;border-radius:10px;background:linear-gradient(#fffefa,#ecefdf);color:#183c59;font:inherit;box-shadow:inset 0 2px #fff,0 3px 0 #173f5b;cursor:pointer;touch-action:manipulation;padding:8px 12px}
 .tokyo-board button:focus-visible{outline:3px solid #fff;outline-offset:2px;box-shadow:0 0 0 6px #1679bb}.tokyo-board button:disabled{background:#d7dfdf;color:#5b6c77;box-shadow:none;cursor:default}
-.tokyo-board .tokyo-choice{position:absolute;transform:translate(-50%,-50%);border-radius:50%;width:46px;height:46px;padding:0;font-size:20px;z-index:3;box-shadow:0 0 0 2px #fff9,0 3px 0 #173f5b}.tokyo-choice[aria-pressed=true]{background:#ffda48;border-color:#805e13}
+
 .tokyo-hud{position:absolute;left:max(16px,env(safe-area-inset-left));right:max(16px,env(safe-area-inset-right));top:max(8px,env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:start;gap:16px;pointer-events:none}.tokyo-hud>*{pointer-events:auto}
 .tokyo-player{display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border:2px solid #173f5b;border-left-width:6px;border-radius:10px 22px 10px 10px;background:#fffdf3;max-width:47%;box-shadow:0 3px 0 #173f5b70}.tokyo-player>span{width:30px;height:30px;border-radius:50%;color:white;display:grid;place-items:center;flex-shrink:0}.tokyo-player>b{max-width:9em;overflow-wrap:anywhere;font-size:14px}.tokyo-player>strong{white-space:nowrap;font-size:20px}
 .tokyo-board .tokyo-destination{border-top:5px solid #ffcf33;font-size:17px;text-align:left;box-shadow:0 3px 0 #173f5b70}.tokyo-destination small{display:block;font-size:11px;margin-top:4px}
 .tokyo-steps{position:absolute;top:70px;left:16px;background:#fffdf3;border:2px solid #173f5b;border-left:5px solid #1679bb;border-radius:7px 18px 18px 7px;padding:2px 12px;font-size:12px}.tokyo-steps b{font-size:32px;color:#1679bb}
-.tokyo-command{position:absolute;left:max(16px,env(safe-area-inset-left));bottom:max(12px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:14px;max-width:70%;background:#fffdf3;border:2px solid #173f5b;border-left:5px solid #1679bb;border-radius:10px;padding:8px 12px}.tokyo-command strong{font-size:15px}.tokyo-command small{display:block;font-size:12px;margin-top:4px}.tokyo-command button:not(:disabled){background:linear-gradient(#ffe875,#ffc72c);border-color:#805e13;min-width:72px}
+
 .tokyo-map-tools{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));right:max(16px,env(safe-area-inset-right));display:grid;gap:6px;text-align:right}.tokyo-map-tools small{background:#fffdf3;border-radius:4px;padding:2px 6px;font-size:10px}
 @media(prefers-reduced-motion:reduce){.tokyo-camera,.tokyo-pawn{transition:none}}
 .tokyo-board.is-overview .tokyo-map-tools{left:max(16px,env(safe-area-inset-left));right:auto;text-align:left}
 .tokyo-steps{top:max(8px,env(safe-area-inset-top));left:50%;transform:translateX(-50%);padding:3px 8px;border-left-width:2px;border-radius:8px;font-size:11px;white-space:nowrap}.tokyo-steps b{font-size:30px}.tokyo-player{max-width:calc((100% - 132px)/2)}
 @media(max-width:700px){.tokyo-player{gap:6px;padding-right:8px}.tokyo-player>strong{font-size:16px}.tokyo-player>b{font-size:12px}.tokyo-board .tokyo-destination{font-size:15px;padding:6px 8px}.tokyo-destination small{font-size:10px}}
-.tokyo-tool-buttons{display:flex;gap:8px}.tokyo-tool-buttons button{font-size:12px;padding:8px 10px}.tokyo-command{max-width:calc(100% - 250px)}.tokyo-standings{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:#183c5980;padding:12px}.tokyo-standings section{background:#fffdf3;border:2px solid #173f5b;border-top:6px solid #1679bb;border-radius:12px;box-shadow:0 5px 0 #173f5b80;width:min(530px,90%);max-height:100%;overflow:auto;padding:12px 20px;text-align:center}.tokyo-standings h2{margin:0;font-size:22px}.tokyo-standings p{font-size:12px;margin:4px 0}.tokyo-standings ol{list-style:none;padding:0;margin:8px 0}.tokyo-standings li{display:flex;gap:10px;align-items:center;border-bottom:1px solid #c6d9df;padding:4px 0;text-align:left;font-size:14px;line-height:1.2}.standings-number{display:grid;place-items:center;width:24px;height:24px;flex-shrink:0;border-radius:50%;color:white}.tokyo-standings li strong{margin-left:auto;white-space:nowrap;text-align:right;font-size:18px}.tokyo-standings li small{display:block;font-size:10px;line-height:1.2;color:#476679}
+.tokyo-tool-buttons{display:flex;gap:8px}.tokyo-tool-buttons button{font-size:12px;padding:8px 10px}.tokyo-standings{position:absolute;inset:0;z-index:20;display:grid;place-items:center;background:#183c5980;padding:12px}.tokyo-standings section{background:#fffdf3;border:2px solid #173f5b;border-top:6px solid #1679bb;border-radius:12px;box-shadow:0 5px 0 #173f5b80;width:min(530px,90%);max-height:100%;overflow:auto;padding:12px 20px;text-align:center}.tokyo-standings h2{margin:0;font-size:22px}.tokyo-standings p{font-size:12px;margin:4px 0}.tokyo-standings ol{list-style:none;padding:0;margin:8px 0}.tokyo-standings li{display:flex;gap:10px;align-items:center;border-bottom:1px solid #c6d9df;padding:4px 0;text-align:left;font-size:14px;line-height:1.2}.standings-number{display:grid;place-items:center;width:24px;height:24px;flex-shrink:0;border-radius:50%;color:white}.tokyo-standings li strong{margin-left:auto;white-space:nowrap;text-align:right;font-size:18px}.tokyo-standings li small{display:block;font-size:10px;line-height:1.2;color:#476679}
 .tokyo-map-tools.tools-raised{top:max(84px,calc(env(safe-area-inset-top) + 76px));bottom:auto}
 .tokyo-cell-symbol{fill:#173f5b;font:900 10px Arial,sans-serif;text-anchor:middle;dominant-baseline:central;pointer-events:none}
 .tokyo-destination.destination-new{animation:destination-reveal 500ms ease-out;background:linear-gradient(#fff8cb,#fffdf3)}@keyframes destination-reveal{from{box-shadow:0 0 0 6px #ffcf3380}to{box-shadow:0 3px 0 #173f5b70}}
-.tokyo-steps.steps-aside{left:16px;top:84px;transform:none}.tokyo-command.command-raised{top:84px;bottom:auto}
+.tokyo-steps.steps-aside{left:16px;top:84px;transform:none}
 .tokyo-player>b{text-wrap:balance}
 .tokyo-board.is-finished .tokyo-hud,.tokyo-board.is-finished .tokyo-map-tools{display:none}.tokyo-board.is-finished .tokyo-label.goal{background:#fffdf2;border-color:#214660;box-shadow:0 1px 0 #fff,0 2px 4px #183c5940}
 
@@ -32,36 +32,34 @@
  .tokyo-board .tokyo-destination{display:flex;justify-content:space-between;align-items:center;gap:6px;min-height:44px;font-size:14px;padding:4px 8px}
  .tokyo-destination small{max-width:125px;margin:0;font-size:10px}
  .tokyo-steps,.tokyo-steps.steps-aside{top:max(112px,calc(env(safe-area-inset-top) + 104px));left:12px;transform:none;padding:2px 8px}.tokyo-steps b{font-size:24px}
- .tokyo-command,.tokyo-command.command-raised{top:auto;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));max-width:none;justify-content:space-between;gap:8px;min-height:72px}
- .tokyo-command>div{min-width:0}.tokyo-command strong{font-size:14px;overflow-wrap:anywhere}.tokyo-command small{font-size:11px}
- .tokyo-map-tools,.tokyo-map-tools.tools-raised,.tokyo-board.is-overview .tokyo-map-tools{top:auto;bottom:max(96px,calc(env(safe-area-inset-bottom) + 84px));left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;text-align:left}
+ .tokyo-map-tools,.tokyo-map-tools.tools-raised,.tokyo-board.is-overview .tokyo-map-tools{top:auto;bottom:max(62px,calc(env(safe-area-inset-bottom) + 50px));left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;text-align:left}
  .tokyo-tool-buttons{gap:6px}.tokyo-tool-buttons button{font-size:11px;padding:6px 8px}
  .tokyo-label{font-size:12px}.tokyo-standings section{width:100%;padding:16px 12px}
 }
 
 .overview-scroll{position:absolute;inset:124px 0 170px;overflow:auto;overscroll-behavior:contain;background:#b5d7df;touch-action:pan-x pan-y;scrollbar-width:thin}.is-overview .tokyo-camera{position:relative;transition:none}.is-overview .tokyo-pawn{transform:translate(-50%,-100%) scale(.65)}.is-overview .tokyo-label{font-size:12px}.overview-hint{position:absolute;top:92px;left:12px;right:12px;margin:0;text-align:center;font-size:12px;color:#fff}
-.route-comparison{position:absolute;top:156px;left:12px;right:12px;display:flex;gap:6px}.tokyo-board .route-comparison button{flex:1;min-width:0;padding:6px;font-size:12px;text-align:left;background:#fffdf3}.route-comparison b,.route-comparison small{display:block}.route-comparison b span{font-size:10px}.route-comparison small{font-size:10px;margin-top:4px}.tokyo-board .route-comparison button[aria-pressed=true]{background:#ffdf68}
-@media(min-width:601px),(max-height:499px){.route-comparison{top:auto;bottom:96px;left:16px;right:auto;width:min(450px,60%)}.overview-scroll{inset:80px 12px 90px}.overview-hint{top:58px}}
-@media(max-width:600px) and (min-height:500px){.overview-hint{top:108px;font-size:11px}.overview-scroll{top:136px}.is-overview .tokyo-tool-buttons{flex-wrap:wrap}.is-overview .tokyo-map-tools{align-items:flex-end}.route-comparison b span{font-size:13px}.route-comparison small{font-size:11px}.route-comparison strong{font-size:13px}}
+@media(min-width:601px),(max-height:499px){.overview-scroll{inset:80px 12px 90px}.overview-hint{top:58px}}
+@media(max-width:600px) and (min-height:500px){.overview-hint{top:108px;font-size:11px}.overview-scroll{top:136px}.is-overview .tokyo-tool-buttons{flex-wrap:wrap}.is-overview .tokyo-map-tools{align-items:flex-end}}
 .overview-current{position:absolute;transform:translate(-50%,-68px);background:#1679bb;color:white;font-size:12px;padding:3px 8px;border:2px solid white;border-radius:6px;z-index:4}
-/* Short landscape screens keep route comparison in its own scrollable lane. */
-@media(min-width:601px),(max-height:499px){
- .route-comparison{top:76px;bottom:90px;left:auto;right:16px;width:192px;flex-direction:column;overflow:auto;overscroll-behavior:contain;padding:2px 2px 5px}
- .tokyo-board .route-comparison button{flex:0 0 auto;min-height:52px}.route-comparison b span{font-size:12px}.route-comparison small{font-size:11px}
-}
-@media(min-width:601px),(max-height:499px){.tokyo-board:has(.route-comparison) .tokyo-map-tools.tools-raised{top:auto;bottom:12px;left:16px;right:auto;text-align:left}}
-
 /* Physical board pieces are rendered above the matte city, not baked into the art. */
-.tokyo-track{stroke:#f6f3e9;stroke-width:8;filter:drop-shadow(0 2px 0 #586878);opacity:.95}.tokyo-track.selected{stroke:#e8c77f;stroke-width:10}
+.tokyo-track{stroke:#f6f3e9;stroke-width:8;filter:drop-shadow(0 2px 0 #586878);opacity:.95}
 .tokyo-cell-base{fill:#89949c;stroke:#536477;stroke-width:1}.tokyo-cell{stroke:#f9f8f3;stroke-width:1.5;fill:#f2f1ea}.tokyo-cell.hub{fill:#eee9db}.tokyo-cell.blue{fill:#538cc5}.tokyo-cell.red{fill:#c45e60}.tokyo-cell-symbol{fill:#fff;font-size:10px;paint-order:stroke;stroke:#344d6933;stroke-width:.5}
 .tokyo-pawn{filter:drop-shadow(0 1px 1px #26374850)}.tokyo-pawn .player-token{width:38px;height:50px}.tokyo-pawn .token-top{height:23px}.tokyo-pawn .token-top .microphone-mark{height:18px;width:14px}.tokyo-pawn .token-number{inset:23px 0 1px;font-size:22px}.pawn-group-count{position:absolute;bottom:-6px;right:-12px;border:1px solid #5a6d79;border-radius:3px;background:#fffaf0;padding:1px 3px;font-size:10px}
-.tokyo-board button{background:#faf9f2;border:1px solid #536679;border-radius:6px;box-shadow:0 2px #687888}.tokyo-board button:hover:not(:disabled){background:#fffdf8}.tokyo-board .tokyo-choice{border-width:2px;background:#faf9f3;box-shadow:0 0 0 2px #fff9,0 2px #526579}.tokyo-board .tokyo-choice[aria-pressed=true],.tokyo-board .route-comparison button[aria-pressed=true]{background:#edcf8c}
+.tokyo-board button{background:#faf9f2;border:1px solid #536679;border-radius:6px;box-shadow:0 2px #687888}.tokyo-board button:hover:not(:disabled){background:#fffdf8}
 .tokyo-player{border:1px solid #4d6378;border-left-width:4px;border-radius:6px;background:#faf9f3;box-shadow:0 2px #63748480}
 .tokyo-board .tokyo-destination{border:1px solid #74544f;border-left:5px solid #b95050;background:#faf9f3;box-shadow:0 2px #6f737780}.tokyo-destination.destination-new{animation:destination-reveal 300ms ease-out}
-.tokyo-command,.tokyo-steps{border:1px solid #4d6378;border-radius:6px;box-shadow:0 2px #63748480;background:#faf9f3}
-.tokyo-command button:not(:disabled){background:#edcf8c;border-color:#78613f}
+.tokyo-steps{border:1px solid #4d6378;border-radius:6px;box-shadow:0 2px #63748480;background:#faf9f3}
+
 .tokyo-label{border:1px solid #556578;border-bottom-width:2px;background:#faf8ee;box-shadow:0 2px 0 #555f7133}.tokyo-label.goal{background:#faf8ee;border-color:#ab4d50;border-bottom-width:4px;box-shadow:0 0 0 2px #fff8}
 
+/* One camera for following, browsing, and the overview. Gestures stay on the map. */
+.map-viewport{position:absolute;inset:0;overflow:hidden;touch-action:none;cursor:grab;user-select:none}
+.map-viewport:focus-visible{outline:3px solid #fff;outline-offset:-4px}
+.is-dragging .map-viewport{cursor:grabbing}
+.is-browsing .tokyo-camera,.is-dragging .tokyo-camera{transition:none}
+.is-overview .tokyo-camera{position:absolute}
+.tokyo-reachable{fill:#ffcf3326;stroke:#ffe5a080;stroke-width:1}
+.tokyo-art,.tokyo-label{pointer-events:none}
 /* The two feet frame the destination cell; pawns and route choices stay above it. */
 .tokyo-goal-arch{position:absolute;width:112px;height:80px;transform:translate(-50%,calc(-100% + 6px));pointer-events:none;z-index:1;filter:drop-shadow(0 2px 1px #3f414433)}
 .tokyo-goal-arch svg{display:block;width:100%;height:100%}
@@ -73,4 +71,25 @@
  .goal-arch-sign{top:3px;left:11px;right:11px}
  .goal-arch-sign small{font-size:7px}
  .goal-arch-sign strong{font-size:13px}
+}
+.map-navigation{position:absolute;left:16px;top:150px;display:flex;flex-direction:column;gap:8px}
+.map-navigation button{width:44px;height:44px;font-size:22px;padding:0}
+.map-browsing-hint{position:absolute;top:76px;left:50%;transform:translateX(-50%);margin:0;padding:5px 10px;border-radius:6px;background:#faf9f3e8;font-size:12px;white-space:nowrap;pointer-events:none}
+.tokyo-board .tokyo-cell-target{position:absolute;transform:translate(-50%,-50%);width:32px;height:32px;min-height:32px;padding:0;border:0;background:transparent;box-shadow:none;border-radius:6px;cursor:help}
+.tokyo-board .tokyo-cell-move{width:44px;height:44px;min-height:44px;cursor:pointer;z-index:3}
+.tokyo-board .tokyo-cell-target:hover:not(:disabled){background:transparent}
+.tokyo-board .tokyo-cell-target:focus-visible{outline:3px solid #075b60;outline-offset:1px;box-shadow:0 0 0 3px #fff}
+.tokyo-cell.can-step{stroke:#075b60;stroke-width:3;filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 4px #64f5dd)}
+.tokyo-move-hint{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));left:16px;max-width:calc(100% - 260px);margin:0;padding:8px 12px;border:1px solid #536679;border-radius:6px;background:#faf9f2e8;font-size:13px;pointer-events:none}
+@media(max-width:600px) and (min-height:500px){.tokyo-move-hint{left:12px;right:12px;max-width:none;text-align:center;font-size:12px}}
+.tokyo-board .tokyo-cell-inspect:hover,.tokyo-board .tokyo-cell-inspect[aria-pressed=true]{background:#ffcf3355;outline:2px solid #fff}
+.map-cell-detail{position:absolute;z-index:6;top:90px;left:50%;transform:translateX(-50%);width:min(330px,calc(100% - 100px));padding:12px;display:grid;gap:5px;background:#faf9f3;border:1px solid #536679;border-radius:8px;box-shadow:0 3px 10px #183c5940;font-size:13px}
+.map-cell-detail small{font-size:11px;font-weight:400}
+.is-browsing .tokyo-map-tools,.is-browsing .tokyo-map-tools.tools-raised{top:auto;bottom:12px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center}
+@media(max-width:600px) and (min-height:500px){
+ .map-navigation{left:12px;top:170px}
+ .map-browsing-hint{top:160px;font-size:11px}
+ .map-cell-detail{top:194px;left:auto;right:12px;transform:none;width:calc(100% - 88px)}
+ .is-browsing .tokyo-map-tools,.is-browsing .tokyo-map-tools.tools-raised{left:12px;right:12px;bottom:max(62px,calc(env(safe-area-inset-bottom) + 50px));flex-wrap:wrap;gap:6px}
+ .is-browsing .tokyo-tool-buttons{flex-wrap:wrap}
 }

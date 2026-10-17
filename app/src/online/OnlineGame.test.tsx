@@ -77,10 +77,9 @@ it('uses the latest illustrated board and allows movement only for the active pa
   const { rerender } = render(<GameView state={state} dispatch={dispatch} remaining={30000} cpuAnswer={null} online canAct={false} />);
   expect(screen.getByAltText('東京の街並み、公園、寺社と湾岸を描いたすごろくマップ').getAttribute('src')).toContain('art/tokyo-board-console.png');
   expect(screen.queryByRole('button', { name: '決定' })).toBeNull();
-  expect(screen.queryByRole('button', { name: /^A .*を選ぶ$/ })).toBeNull();
+  expect(screen.queryAllByRole('button', { name: /へ進む$/ })).toHaveLength(0);
   rerender(<GameView state={state} dispatch={dispatch} remaining={30000} cpuAnswer={null} online canAct />);
-  fireEvent.click(screen.getByRole('button', { name: /^A .*を選ぶ$/ }));
-  fireEvent.click(screen.getByRole('button', { name: '決定' }));
+  fireEvent.click(screen.getAllByRole('button', { name: /へ進む$/ })[0]);
   expect(dispatch).toHaveBeenCalledWith({ type: 'STEP_TO', nodeId: expect.any(String) });
 });
 
