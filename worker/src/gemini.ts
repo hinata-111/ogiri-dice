@@ -19,6 +19,7 @@ export async function callGemini(
   prompt: string,
   schema: object,
   signal?: AbortSignal,
+  systemInstruction?: string,
 ): Promise<unknown> {
   const res = await fetch(API_URL, {
     signal,
@@ -28,6 +29,7 @@ export async function callGemini(
       "x-goog-api-key": apiKey,
     },
     body: JSON.stringify({
+      ...(systemInstruction === undefined ? {} : { systemInstruction: { parts: [{ text: systemInstruction }] } }),
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
         responseMimeType: "application/json",

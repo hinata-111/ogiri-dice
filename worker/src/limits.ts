@@ -1,0 +1,1 @@
+export const EVALUATION_COMMENT_MAX_LENGTH = 300;

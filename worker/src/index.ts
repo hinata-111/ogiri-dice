@@ -1,5 +1,6 @@
 import { buildCpuPrompt, buildEvaluatePrompt } from "./prompts";
 import { callGemini } from "./gemini";
+import { EVALUATION_COMMENT_MAX_LENGTH } from "./limits";
 import { RateLimiter } from "./rateLimiter";
 import { roomRoute, reply, type RoomEnv } from './room';
 export { GameRoom } from './room';
@@ -80,15 +81,18 @@ export default {
         return json({ error: "bad_request" }, 400);
       }
       try {
+        const { prompt, systemInstruction } = buildEvaluatePrompt(topic, answer);
         const raw = (await callGemini(
           env.GEMINI_API_KEY,
-          buildEvaluatePrompt(topic, answer),
+          prompt,
           EVAL_SCHEMA,
+          undefined,
+          systemInstruction,
         )) as { score?: unknown; comment?: unknown };
         if (typeof raw.score !== "number" || typeof raw.comment !== "string") {
           return json({ error: "gemini_failed" }, 502);
         }
-        return json({ score: clamp(raw.score, 1, 6), comment: raw.comment });
+        return json({ score: clamp(raw.score, 1, 6), comment: raw.comment.slice(0, EVALUATION_COMMENT_MAX_LENGTH) });
       } catch (e) {
         console.error("evaluate failed:", e);
         return json({ error: "gemini_failed" }, 502);

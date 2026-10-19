@@ -2,8 +2,9 @@ import { FALLBACK_CPU_ANSWERS, FALLBACK_EVALUATION, type Evaluator } from '../..
 import type { CpuPersonality, EvaluationResult } from '../../app/src/game/types';
 import { callGemini } from './gemini';
 import { buildCpuPrompt, buildEvaluatePrompt } from './prompts';
+import { EVALUATION_COMMENT_MAX_LENGTH } from './limits';
 
-type Call = (key: string, prompt: string, schema: object, signal: AbortSignal) => Promise<unknown>;
+type Call = (key: string, prompt: string, schema: object, signal: AbortSignal, systemInstruction?: string) => Promise<unknown>;
 export class WorkerEvaluator implements Evaluator {
   private key: string;
   private call: Call;
@@ -11,12 +12,12 @@ export class WorkerEvaluator implements Evaluator {
   constructor(key: string, call: Call = callGemini, timeout = 10_000) {
     this.key = key; this.call = call; this.timeout = timeout;
   }
-  private async attempt(prompt: string, schema: object): Promise<unknown> {
+  private async attempt(prompt: string, schema: object, systemInstruction?: string): Promise<unknown> {
     const controller = new AbortController();
     let timer: ReturnType<typeof setTimeout> | undefined;
     try {
       return await Promise.race([
-        this.call(this.key, prompt, schema, controller.signal),
+        this.call(this.key, prompt, schema, controller.signal, systemInstruction),
         new Promise<never>((_, reject) => {
           timer = setTimeout(() => { controller.abort(); reject(new Error('timeout')); }, this.timeout);
         }),
@@ -25,11 +26,12 @@ export class WorkerEvaluator implements Evaluator {
   }
   async evaluate(topic: string, answer: string): Promise<EvaluationResult> {
     const schema = { type: 'OBJECT', properties: { score: { type: 'INTEGER' }, comment: { type: 'STRING' } }, required: ['score', 'comment'] };
+    const { prompt, systemInstruction } = buildEvaluatePrompt(topic, answer);
     for (let i = 0; i < 2; i++) {
       try {
-        const raw = await this.attempt(buildEvaluatePrompt(topic, answer), schema) as Partial<EvaluationResult> | null;
+        const raw = await this.attempt(prompt, schema, systemInstruction) as Partial<EvaluationResult> | null;
         if (raw && Number.isInteger(raw.score) && raw.score! >= 1 && raw.score! <= 6 && typeof raw.comment === 'string') {
-          return { score: raw.score!, comment: raw.comment.slice(0, 300) };
+          return { score: raw.score!, comment: raw.comment.slice(0, EVALUATION_COMMENT_MAX_LENGTH) };
         }
       } catch { /* Bounded retry; never log secret-bearing upstream errors. */ }
     }
