@@ -1,25 +1,26 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { RateLimiter } from "./rateLimiter";
 
 describe("RateLimiter", () => {
-  it("上限までは許可、超えたら拒否", () => {
-    const rl = new RateLimiter(3, 60000);
-    expect(rl.allow("ip1", 0)).toBe(true);
-    expect(rl.allow("ip1", 1)).toBe(true);
-    expect(rl.allow("ip1", 2)).toBe(true);
-    expect(rl.allow("ip1", 3)).toBe(false);
+  it("bindingにキーを渡し許可の結果を使う", async () => {
+    const limit = vi.fn(async () => ({ success: true }));
+    expect(await new RateLimiter({ limit }).allow("ai:ip1")).toBe(true);
+    expect(limit).toHaveBeenCalledWith({ key: "ai:ip1" });
   });
 
-  it("ウィンドウが過ぎたら再び許可", () => {
-    const rl = new RateLimiter(1, 60000);
-    expect(rl.allow("ip1", 0)).toBe(true);
-    expect(rl.allow("ip1", 1000)).toBe(false);
-    expect(rl.allow("ip1", 61000)).toBe(true);
+  it("新しいインスタンスでもbindingの拒否を維持する", async () => {
+    const limit = vi.fn(async () => ({ success: false }));
+    expect(await new RateLimiter({ limit }).allow("ai:ip1")).toBe(false);
+    expect(await new RateLimiter({ limit }).allow("ai:ip1")).toBe(false);
+    expect(limit).toHaveBeenCalledTimes(2);
   });
 
-  it("キーごとに独立", () => {
-    const rl = new RateLimiter(1, 60000);
-    expect(rl.allow("ip1", 0)).toBe(true);
-    expect(rl.allow("ip2", 0)).toBe(true);
+  it("bindingがなければローカルの許可に切り替えず失敗する", async () => {
+    await expect(Promise.resolve().then(() => new RateLimiter().allow("ai:ip1"))).rejects.toThrow();
+  });
+
+  it("bindingの例外を呼び出し元へ伝える", async () => {
+    const limit = vi.fn(async () => { throw new Error("unavailable"); });
+    await expect(Promise.resolve().then(() => new RateLimiter({ limit }).allow("ai:ip1"))).rejects.toThrow("unavailable");
   });
 });

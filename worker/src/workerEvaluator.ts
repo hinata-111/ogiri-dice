@@ -1,6 +1,6 @@
 import { FALLBACK_CPU_ANSWERS, FALLBACK_EVALUATION, type Evaluator } from '../../app/src/ai/evaluator';
 import type { CpuPersonality, EvaluationResult } from '../../app/src/game/types';
-import { callGemini } from './gemini';
+import { callGemini, GeminiNonRetryableError } from './gemini';
 import { buildCpuPrompt, buildEvaluatePrompt } from './prompts';
 import { EVALUATION_COMMENT_MAX_LENGTH } from './limits';
 
@@ -33,7 +33,10 @@ export class WorkerEvaluator implements Evaluator {
         if (raw && Number.isInteger(raw.score) && raw.score! >= 1 && raw.score! <= 6 && typeof raw.comment === 'string') {
           return { score: raw.score!, comment: raw.comment.slice(0, EVALUATION_COMMENT_MAX_LENGTH) };
         }
-      } catch { /* Bounded retry; never log secret-bearing upstream errors. */ }
+      } catch (error) {
+        if (error instanceof GeminiNonRetryableError) break;
+        /* Bounded retry; never log secret-bearing upstream errors. */
+      }
     }
     return FALLBACK_EVALUATION;
   }
