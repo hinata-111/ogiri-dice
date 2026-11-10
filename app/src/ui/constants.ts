@@ -1,4 +1,7 @@
-export const MOVE_STEP_MS = 280; // コマ1マス移動の時間
+export const MOVE_STEP_MS = 520; // コマとカメラが1マス分を移動する時間
+export const MAP_FOLLOW_ZOOM = 2.2; // 広く見るに対する通常の盤面倍率
+export const MAP_MIN_TRAVEL_WIDTH = 2600; // 小さい横画面でもマス間の移動距離を保つ
+export const MAP_PIECE_REFERENCE_WIDTH = 1400; // マスの大きさを保ち、間隔だけを広げる基準幅
 export const CAMERA_SETTLE_MS = 800; // ターン開始時のカメラ移動待ち
 export const RESULT_REVEAL_MS = 600; // スコア発表のドラムロール時間
 export const CELL_EFFECT_MS = 1600; // マス効果ポップアップ表示時間
