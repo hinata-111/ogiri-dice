@@ -67,7 +67,7 @@ it.each([{width:1280,height:672},{width:390,height:796},{width:844,height:342}])
     expect(c.x+c.width).toBeGreaterThanOrEqual(size.width-.01);
     expect(c.y+c.height).toBeGreaterThanOrEqual(size.height-.01);
   };
-  expect(result.current.width).toBeLessThan(Math.max(size.width,size.height*16/9)*1.1);
+  expect(result.current.width).toBeGreaterThan(Math.max(size.width,size.height*16/9)*1.8);
   covers();
   act(()=>result.current.overview());
   covers();
@@ -271,7 +271,7 @@ it('遠いマスの情報を見る操作と矢印キーはコマを動かさな�
   expect(onStep).not.toHaveBeenCalled();
 });
 
-it('広く見るは手番交代でも維持し、追従再開後は小さな移動で画面を揺らさない', () => {
+it('広く見るは手番交代でも維持し、追従再開後は移動先が画面内に収まる', () => {
   const {rerender}=render(<TokyoBoard state={stateAt()} onStep={()=>{}} />);
   fireEvent.click(screen.getByRole('button', { name: '広く見る' }));
   const before=camera().style.transform;
@@ -280,8 +280,65 @@ it('広く見るは手番交代でも維持し、追従再開後は小さな移�
   rerender(<TokyoBoard state={next} onStep={()=>{}} />);
   expect(camera().style.transform).toBe(before);
   fireEvent.click(screen.getByRole('button', { name: '現在地へ戻る' }));
-  const followed=camera().style.transform;
   next.players=[{...next.players[0], position:nodes.find(n=>n.id==='asakusa')!.neighbors[0]}];
   rerender(<TokyoBoard state={{...next}} onStep={()=>{}} />);
-  expect(camera().style.transform).toBe(followed);
+  const [x,y]=camera().style.transform.match(/-?\d+(?:\.\d+)?/g)!.map(Number);
+  const point=buildArtLayout(nodes).points.get(next.players[0].position)!;
+  const width=parseFloat(camera().style.width),height=parseFloat(camera().style.height);
+  expect(x+point[0]*width/100).toBeGreaterThanOrEqual(20);
+  expect(x+point[0]*width/100).toBeLessThanOrEqual(824);
+  expect(y+point[1]*height/100).toBeGreaterThanOrEqual(60);
+  expect(y+point[1]*height/100).toBeLessThanOrEqual(330);
+});
+
+it('通常表示はマス間を広げ、広く見るで明確に引き、現在地へ戻ると通常の距離感になる', () => {
+  const { result }=renderHook(()=>useMapCamera({width:1280,height:672},[37,47],0));
+  const closeWidth=result.current.width;
+  const layout=buildArtLayout(nodes);
+  const distances=nodes.flatMap(node=>node.neighbors.map(id=>{
+    const a=layout.points.get(node.id)!,b=layout.points.get(id)!;
+    return Math.hypot((a[0]-b[0])*closeWidth/100,(a[1]-b[1])*closeWidth*9/1600);
+  }));
+  expect(Math.min(...distances)).toBeGreaterThanOrEqual(100);
+  act(()=>result.current.overview());
+  expect(closeWidth/result.current.width).toBeGreaterThanOrEqual(2);
+  act(()=>result.current.follow());
+  expect(result.current.width).toBe(closeWidth);
+});
+
+it('スマホの追従では現在地と隣接候補を一緒に確認できる', () => {
+  const layout=buildArtLayout(nodes),position=layout.points.get('shinjuku')!;
+  const neighbors=nodes.find(node=>node.id==='shinjuku')!.neighbors.map(id=>layout.points.get(id)!);
+  const {result}=renderHook(()=>useMapCamera({width:390,height:796},position,0,neighbors));
+  for(const point of [position,...neighbors]){
+    const x=result.current.x+point[0]*result.current.width/100;
+    const y=result.current.y+point[1]*result.current.height/100;
+    expect(x).toBeGreaterThanOrEqual(22);
+    expect(x).toBeLessThanOrEqual(368);
+    expect(y).toBeGreaterThanOrEqual(154);
+    expect(y).toBeLessThanOrEqual(676);
+  }
+});
+
+it('スマホで画面外に残る長い区間の候補は、その方向へ見回してから選べる', () => {
+  vi.stubGlobal('ResizeObserver',class {
+    callback:()=>void;
+    constructor(callback:()=>void){this.callback=callback}
+    observe(element:HTMLElement){
+      Object.defineProperty(element,'clientWidth',{value:390});
+      Object.defineProperty(element,'clientHeight',{value:796});
+      this.callback();
+    }
+    disconnect(){}
+  });
+  const onStep=vi.fn();
+  render(<TokyoBoard state={stateAt('roppongi','roppongi-shinagawa-0')} onStep={onStep}/>);
+  const directions=screen.getByRole('navigation',{name:'画面外の移動候補'});
+  const before=camera().style.transform;
+  const beforeWidth=parseFloat(camera().style.width);
+  fireEvent.click(directions.querySelector('button')!);
+  expect(camera().style.transform).not.toBe(before);
+  expect(parseFloat(camera().style.width)).toBeGreaterThan(beforeWidth);
+  expect(screen.getByRole('button',{name:'現在地へ戻る'})).toBeTruthy();
+  expect(onStep).not.toHaveBeenCalled();
 });

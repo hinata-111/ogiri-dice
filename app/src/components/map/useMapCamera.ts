@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from 'react';
+import { MAP_FOLLOW_ZOOM, MAP_MIN_TRAVEL_WIDTH } from '../../ui/constants';
 
 type Size = { width: number; height: number };
 type Point = { x: number; y: number };
@@ -8,7 +9,7 @@ const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(ma
 const DRAG_THRESHOLD = 6;
 
 // Only presentation state lives here. Camera gestures never dispatch game actions.
-export function useMapCamera(size: Size, position: readonly number[], playerId: number) {
+export function useMapCamera(size: Size, position: readonly number[], playerId: number, focusPoints: readonly (readonly number[])[] = []) {
   const viewport = useRef<HTMLDivElement>(null);
   const narrow = size.width <= 600 && size.height >= 500;
   const top = narrow ? 154 : 78;
@@ -16,15 +17,33 @@ export function useMapCamera(size: Size, position: readonly number[], playerId: 
   const center = { x: size.width / 2, y: (top + bottom) / 2 };
   // Cover the entire viewport, including the area behind the controls.
   const fitWidth = Math.max(size.width, size.height * 16 / 9);
-  const normalWidth = fitWidth * 1.05;
+  const normalWidth = Math.max(fitWidth * MAP_FOLLOW_ZOOM, MAP_MIN_TRAVEL_WIDTH);
+  const frame = [position, ...focusPoints];
+  const frameLeft = Math.min(...frame.map(point => point[0])), frameRight = Math.max(...frame.map(point => point[0]));
+  const frameTop = Math.min(...frame.map(point => point[1])), frameBottom = Math.max(...frame.map(point => point[1]));
+  const side = 32;
+  const followWidth = Math.max(fitWidth, Math.min(normalWidth,
+    frameRight > frameLeft ? (size.width - side * 2) * 100 / (frameRight - frameLeft) : Infinity,
+    frameBottom > frameTop ? Math.max(44, bottom - top) * 1600 / (9 * (frameBottom - frameTop)) : Infinity));
   const bound = (c: Camera): Camera => ({ ...c,
     x: clamp(c.x, size.width - c.width, 0),
     y: clamp(c.y, size.height - c.width * 9 / 16, 0),
   });
-  const centered = (point: readonly number[], width: number, mode: Camera['mode']): Camera => bound({
-    width, mode, x: center.x - point[0] * width / 100, y: center.y - point[1] * width * 9 / 1600,
-  });
-  const [camera, setCamera] = useState<Camera>(() => centered(position, normalWidth, 'follow'));
+  const keepFrameVisible = (c: Camera): Camera => {
+    if (!focusPoints.length) return bound(c);
+    const shift = (start: number, end: number, low: number, high: number) =>
+      end - start > high - low ? (low + high - start - end) / 2
+        : start < low ? low - start : end > high ? high - end : 0;
+    return bound({ ...c,
+      x: c.x + shift(c.x + frameLeft * c.width / 100, c.x + frameRight * c.width / 100, side, size.width - side),
+      y: c.y + shift(c.y + frameTop * c.width * 9 / 1600, c.y + frameBottom * c.width * 9 / 1600, top, bottom),
+    });
+  };
+  const centered = (point: readonly number[], width: number, mode: Camera['mode']): Camera => {
+    const next = bound({ width, mode, x: center.x - point[0] * width / 100, y: center.y - point[1] * width * 9 / 1600 });
+    return mode === 'follow' ? keepFrameVisible(next) : next;
+  };
+  const [camera, setCamera] = useState<Camera>(() => centered(position, followWidth, 'follow'));
   const live = useRef(camera);
   const update = (value: Camera) => { live.current = value; setCamera(value); };
   const prior = useRef({ ...size, playerId });
@@ -39,12 +58,12 @@ export function useMapCamera(size: Size, position: readonly number[], playerId: 
       if (next.width !== c.width || Math.abs(next.x - c.x) > .01 || Math.abs(next.y - c.y) > .01) update(next);
       return;
     }
-    if (resized || changedPlayer) { update(centered(position, resized ? normalWidth : c.width, 'follow')); return; }
+    if (resized || changedPlayer || Math.abs(c.width - followWidth) > .01) { update(centered(position, followWidth, 'follow')); return; }
     const px = c.x + position[0] * c.width / 100;
     const py = c.y + position[1] * c.width * 9 / 1600;
     const left = size.width * .3, right = size.width * .65;
     const safeTop = top + (bottom - top) * .25, safeBottom = bottom - (bottom - top) * .25;
-    const next = bound({ ...c, x: c.x + (clamp(px, left, right) - px), y: c.y + (clamp(py, safeTop, safeBottom) - py) });
+    const next = keepFrameVisible({ ...c, x: c.x + (clamp(px, left, right) - px), y: c.y + (clamp(py, safeTop, safeBottom) - py) });
     // Fractional layout coordinates must not keep a layout effect updating itself.
     if (Math.abs(next.x - c.x) > .01 || Math.abs(next.y - c.y) > .01) update(next);
   });
@@ -125,8 +144,9 @@ export function useMapCamera(size: Size, position: readonly number[], playerId: 
   return { ...camera, height: camera.width * 9 / 16, viewport, dragging,
     canZoomIn: camera.width < normalWidth * 2.5 - 1, canZoomOut: camera.width > fitWidth + 1,
     zoomIn: () => zoom(1.25), zoomOut: () => zoom(1 / 1.25),
-    follow: () => update(centered(position, normalWidth, 'follow')),
+    follow: () => update(centered(position, followWidth, 'follow')),
     destination: (point: readonly number[]) => update(centered(point, normalWidth, 'destination')),
+    reveal: (point: readonly number[]) => update(centered(point, normalWidth, 'free')),
     overview: () => update(centered([50, 50], fitWidth, 'overview')),
     bindings: { onPointerDown, onPointerMove, onPointerUp: finishPointer, onPointerCancel: finishPointer, onLostPointerCapture: finishPointer, onKeyDown,
       onClickCapture: (e: ReactMouseEvent<HTMLDivElement>) => { if (suppressClick.current && e.detail !== 0) { e.preventDefault(); e.stopPropagation(); suppressClick.current = false; } },
