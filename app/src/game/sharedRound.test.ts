@@ -23,6 +23,14 @@ function score(s: GameState, playerId: number, value: number) {
 }
 
 describe('共通お題ラウンド', () => {
+  it('ignores answers and timeouts until explicitly started, and ignores duplicate starts', () => {
+    const waiting = started();
+    expect(submit(waiting, 0)).toBe(waiting);
+    expect(reduce(waiting, { type: 'CLOSE_ROUND' })).toBe(waiting);
+    expect(waiting.usedTopicIds).toEqual([]);
+    const active = reduce(waiting, { type: 'BEGIN_ROUND', topic });
+    expect(reduce(active, { type: 'BEGIN_ROUND', topic: { ...topic, id: 'duplicate' } })).toBe(active);
+  });
   it('accepts every player once, and closes early only when everyone submitted', () => {
     let s = answering();
     expect(s.phase.name).toBe('roundAnswering');

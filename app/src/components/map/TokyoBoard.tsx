@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { GameState } from '../../game/state';
 import { currentPlayer } from '../../game/state';
 import { buildNodeMap, moveOptions } from '../../game/graph';
@@ -15,7 +15,7 @@ import { GoalArch } from './GoalArch';
 const colors=playerColors;
 const cellNames={normal:'通常マス',blue:'賞金チャレンジ',red:'減額回避チャレンジ'};
 
-export function TokyoBoard({state,onStep,canAct=true}:{state:GameState;onStep:(id:string)=>void;canAct?:boolean}) {
+export function TokyoBoard({state,onStep,canAct=true,turnControls}:{state:GameState;onStep:(id:string)=>void;canAct?:boolean;turnControls?:ReactNode}) {
   const root=useRef<HTMLDivElement>(null);
   const boardId=useId();
   const standingsTrigger=useRef<HTMLButtonElement>(null);
@@ -23,11 +23,17 @@ export function TokyoBoard({state,onStep,canAct=true}:{state:GameState;onStep:(i
   const [inspected,setInspected]=useState<string|null>(null);
   const lastStep=useRef<string|null>(null);
   const [standings,setStandings]=useState(false);
+  const previouslyShowingStandings=useRef(false);
   const [newDestination,setNewDestination]=useState(true);
   useEffect(()=>{setNewDestination(true);const timer=setTimeout(()=>setNewDestination(false),4000);return()=>clearTimeout(timer)},[state.destinationId]);
   const player=currentPlayer(state),phase=state.phase;
+  const canViewStandings=phase.name==='moving'||phase.name==='turnStart';
   useEffect(()=>setStandings(false),[phase.name,player.id,state.round]);
-  const closeStandings=()=>{setStandings(false);standingsTrigger.current?.focus()};
+  useLayoutEffect(()=>{
+    if(previouslyShowingStandings.current&&!standings&&canViewStandings)standingsTrigger.current?.focus();
+    previouslyShowingStandings.current=standings;
+  },[standings,canViewStandings]);
+  const closeStandings=()=>setStandings(false);
   const graph=useMemo(()=>buildNodeMap(state.nodes),[state.nodes]);
   const layout=useMemo(()=>buildArtLayout(state.nodes),[state.nodes]);
   const points=layout.points;
@@ -50,8 +56,8 @@ export function TokyoBoard({state,onStep,canAct=true}:{state:GameState;onStep:(i
   const pawnX=x+px*width/100,pawnY=y+py*height/100;
   const stepsAside=!narrow&&Math.abs(pawnX-size.width/2)<75&&pawnY<150;
   const toolsRaised=!narrow&&!overview&&x+px*width/100>size.width-270&&y+py*height/100>size.height-150;
-  return <div className={`tokyo-board ${overview?'is-overview':''} ${camera.mode!=='follow'?'is-browsing':''} ${camera.dragging?'is-dragging':''} ${phase.name==='gameResult'?'is-finished':''}`} ref={root}>
-    <div inert={standings&&phase.name==='moving'}>
+  return <div className={`tokyo-board ${overview?'is-overview':''} ${camera.mode!=='follow'?'is-browsing':''} ${camera.dragging?'is-dragging':''} ${phase.name==='gameResult'?'is-finished':''} ${phase.name==='turnStart'?'is-preparing':''}`} ref={root}>
+    <div inert={standings&&canViewStandings} aria-hidden={standings&&canViewStandings||undefined}>
     <div className="map-viewport" ref={camera.viewport} role="region" tabIndex={0} aria-label="東京マップ。ドラッグ・矢印キーで移動、プラス・マイナスで拡大縮小" {...camera.bindings}>
     <div className="tokyo-camera" style={{width,height,transform:`translate(${x}px,${y}px)`}}>
       <img className="tokyo-art" draggable={false} src={`${import.meta.env.BASE_URL}art/tokyo-board-console.png`} alt="東京の街並み、公園、寺社と湾岸を描いたすごろくマップ"/>
@@ -88,9 +94,9 @@ export function TokyoBoard({state,onStep,canAct=true}:{state:GameState;onStep:(i
     {inspected&&<section className="map-cell-detail" aria-label="マスの情報"><strong>{describe(inspected)}</strong><span>{cellNames[graph.get(inspected)!.cell]} · 現在地から最短 {distance(player.position,inspected)}マス</span>{phase.name==='moving'&&<span>{reachable.has(inspected)?'残り歩数で通れるマス':'残り歩数で通れる範囲の外'}</span>}<small>距離は地図上の最短です。移動中は来た道へ戻れません（行き止まりを除く）。</small><button onClick={()=>setInspected(null)} aria-label="マスの情報を閉じる">閉じる</button></section>}
     <div className="tokyo-hud"><div className="tokyo-player" style={{borderLeftColor:colors[player.id%4]}}><span style={{background:colors[player.id%4]}}>{player.id+1}</span><b>{player.name}</b><strong>{player.money/10000}万円</strong></div><button className={`tokyo-destination ${newDestination?"destination-new":""}`} onClick={()=>{setInspected(null);if(view==='destination')returnToPlayer();else camera.destination(points.get(state.destinationId!)!)}} aria-pressed={view==='destination'}><span>⚑ {newDestination?'新しい目的地':'目的地'}　{state.destinationId&&describe(state.destinationId)}</span><small>最短 {distance(player.position,state.destinationId!)}マス・到着で{ARRIVAL_PRIZE/10000}万円</small></button></div>
     {phase.name==='moving'&&!overview&&<div className={`tokyo-steps ${stepsAside?'steps-aside':''}`}>あと <b>{phase.remaining}</b> マス</div>}
-    <div className={`tokyo-map-tools ${toolsRaised?'tools-raised':''}`}><div className="tokyo-tool-buttons"><button onClick={()=>{setInspected(null);camera.overview()}}>広く見る</button>{camera.mode!=='follow'&&<button onClick={returnToPlayer}>現在地へ戻る</button>}{phase.name==='moving'&&<button ref={standingsTrigger} onClick={()=>setStandings(true)}>みんなの状況</button>}</div><small>{state.round} / {MAX_ROUNDS} 周目</small></div>
+    <div className={`tokyo-map-tools ${toolsRaised?'tools-raised':''}`}><div className="tokyo-tool-buttons"><button onClick={()=>{setInspected(null);camera.overview()}}>広く見る</button>{camera.mode!=='follow'&&<button onClick={returnToPlayer}>現在地へ戻る</button>}{canViewStandings&&<button ref={standingsTrigger} onClick={()=>setStandings(true)}>みんなの状況</button>}</div>{turnControls}<small>{state.round} / {MAX_ROUNDS} 周目</small></div>
     {phase.name==='moving'&&<p className="tokyo-move-hint" id={`${boardId}-move-hint`} role="status">{player.kind==='cpu'||!canAct?`${player.name}が移動中…`:'光っている隣のマスをタップ'}</p>}
     </div>
-    {standings&&phase.name==='moving'&&<div className="tokyo-standings" role="dialog" aria-modal="true" aria-labelledby="standings-title" onKeyDown={e=>{if(e.key==='Escape')closeStandings();if(e.key==='Tab')e.preventDefault()}}><section><h2 id="standings-title">みんなの状況</h2><p>先に{WIN_MONEY/10000}万円で優勝！</p><ol>{rankPlayers(state.players).map((p,i)=><li key={p.id}><span className="standings-number" style={{background:colors[p.id%4]}}>{p.id+1}</span><span>{i+1}位　{p.name}{p.id===player.id?'（手番）':''}</span><strong>{p.money/10000}万円<small>目的地に{p.arrivals}回到着</small></strong></li>)}</ol><button autoFocus onClick={closeStandings}>マップへ戻る</button></section></div>}
+    {standings&&canViewStandings&&<div className="tokyo-standings" role="dialog" aria-modal="true" aria-labelledby="standings-title" onKeyDown={e=>{if(e.key==='Escape')closeStandings();if(e.key==='Tab')e.preventDefault()}}><section><h2 id="standings-title">みんなの状況</h2><p>先に{WIN_MONEY/10000}万円で優勝！</p><ol>{rankPlayers(state.players).map((p,i)=><li key={p.id}><span className="standings-number" style={{background:colors[p.id%4]}}>{p.id+1}</span><span>{i+1}位　{p.name}{p.id===player.id?'（手番）':''}</span><strong>{p.money/10000}万円<small>目的地に{p.arrivals}回到着</small></strong></li>)}</ol><button autoFocus onClick={closeStandings}>マップへ戻る</button></section></div>}
   </div>;
 }

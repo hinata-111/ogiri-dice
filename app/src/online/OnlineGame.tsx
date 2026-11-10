@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { GameView } from '../components/GameView';
 import type { GameAction } from '../game/state';
 import type { Seat } from './protocol';
+import { roundStarter } from './protocol';
 import { loadSeat, roomRequest, seatKey, useRoom } from './useRoom';
 import './online.css';
 import { OnlineEntry, RoomLobby } from './RoomLobby';
@@ -32,8 +33,10 @@ export function OnlineGame({ initialCode, onExit }: { initialCode: string; onExi
   const me = room?.members.find(m => m.id === seat?.memberId);
   const myTurn = !!me && me.playerId !== null && me.playerId === room?.game.players[room.game.currentPlayerIndex]?.id;
   const sharedAnswering = room?.game.phase.name === 'roundAnswering';
+  const startingRound = room?.game.phase.name === 'turnStart';
+  const starter = room ? roundStarter(room) : undefined;
   const myEntry = room?.game.sharedRound?.entries.find(e => e.playerId === me?.playerId);
-  const canAct = connected && !session.pending && (sharedAnswering ? !!myEntry && !myEntry.submitted : myTurn);
+  const canAct = connected && !session.pending && (startingRound ? !!me && starter?.id === me.id : sharedAnswering ? !!myEntry && !myEntry.submitted : myTurn);
 
   const enter = async (create: boolean) => {
     if (busy) return;
@@ -47,7 +50,8 @@ export function OnlineGame({ initialCode, onExit }: { initialCode: string; onExi
     finally { setBusy(false); }
   };
   const leave = async () => {
-    if (seat) {
+    // A replaced tab shares its seat with the new tab; exit only this screen.
+    if (seat && session.status !== 'replaced') {
       // Exit locally even if the network is unavailable; the server has a grace deadline.
       try { await roomRequest(`/${seat.code}/leave`, { token: seat.token }); } catch { /* Server deadlines handle disconnect. */ }
       try { localStorage.removeItem(seatKey(seat.code)); } catch { /* Storage unavailable. */ }
@@ -56,6 +60,7 @@ export function OnlineGame({ initialCode, onExit }: { initialCode: string; onExi
   };
   const dispatch = (action: GameAction) => {
     if (!room || !canAct) return;
+    if (action.type === 'BEGIN_ROUND') session.send({ type: 'beginRound', revision: room.revision });
     if (action.type === 'SUBMIT_ROUND_ANSWER') session.send({ type: 'answer', answer: action.answer, round: action.round, revision: room.revision });
     if (action.type === 'SUBMIT_ANSWER') session.send({ type: 'answer', answer: action.answer, revision: room.revision });
     if (action.type === 'STEP_TO') session.send({ type: 'step', nodeId: action.nodeId, revision: room.revision });
@@ -82,8 +87,8 @@ export function OnlineGame({ initialCode, onExit }: { initialCode: string; onExi
     {room?.game.phase.name === 'setup' ? <RoomLobby room={room} memberId={seat.memberId} inviteUrl={invite.href} copied={copied} connected={connected} pending={session.pending}
       onCopy={async () => { try { await navigator.clipboard.writeText(invite.href); setCopied(true); } catch { setError('招待URLを選択してコピーしてください'); } }}
       onStart={() => session.send({ type: 'start', revision: room.revision })}/> : room && <div className="online-board">
-      <div className="online-turn">{sharedAnswering ? `第${room.game.round}問 · 全員で回答` : room.game.phase.name === 'roundEvaluating' ? '全員の回答を採点中' : room.game.phase.name === 'roundResults' ? '今回の結果' : myTurn ? 'あなたの手番' : `${room.game.players[room.game.currentPlayerIndex]?.name ?? ''} の手番`}{room.deadline && ` · あと${Math.ceil(session.remaining / 1000)}秒`}{session.pending && ' · 送信中'}</div>
-      <GameView state={room.game} dispatch={dispatch} remaining={session.remaining} cpuAnswer={null} online canAct={canAct} isMyTurn={myTurn} playerId={me?.playerId ?? null} onExit={leave} connected={connected}/>
+      <div className="online-turn">{startingRound ? `第${room.game.round}問 · 開始待ち` : sharedAnswering ? `第${room.game.round}問 · 全員で回答` : room.game.phase.name === 'roundEvaluating' ? '全員の回答を採点中' : room.game.phase.name === 'roundResults' ? '今回の結果' : myTurn ? 'あなたの手番' : `${room.game.players[room.game.currentPlayerIndex]?.name ?? ''} の手番`}{room.deadline && ` · あと${Math.ceil(session.remaining / 1000)}秒`}{session.pending && ' · 送信中'}</div>
+      <GameView state={room.game} dispatch={dispatch} remaining={session.remaining} cpuAnswer={null} online canAct={canAct} isMyTurn={myTurn} playerId={me?.playerId ?? null} startPlayerName={starter?.name} onExit={leave} connected={connected}/>
     </div>}
   </div>;
 }

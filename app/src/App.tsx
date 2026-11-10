@@ -14,7 +14,7 @@ import { createEvaluator } from "./ai";
 import { useCountdown } from "./hooks/useCountdown";
 import { useLocalRound } from './hooks/useLocalRound';
 import {
-  ARRIVAL_MS, CAMERA_SETTLE_MS, CHALLENGE_INTRO_MS, CPU_SUBMIT_DELAY_MS, MOVE_STEP_MS,
+  ARRIVAL_MS, CHALLENGE_INTRO_MS, CPU_SUBMIT_DELAY_MS, MOVE_STEP_MS,
 } from "./ui/constants";
 const nodes = (mapData as { nodes: MapNode[] }).nodes;
 const topics = (topicsData as { topics: Topic[] }).topics;
@@ -29,15 +29,6 @@ function LocalGame({ onOnline }: { onOnline: () => void }) {
   const player = state.players.length > 0 ? currentPlayer(state) : null;
   const isCpuTurn = player?.kind === "cpu";
   useLocalRound(state, evaluator, dispatch);
-  // turnStart: カメラ移動を待ってお題
-  useEffect(() => {
-    if (phase.name !== "turnStart" || state.players.some(p => p.kind === 'human')) return;
-    const t = setTimeout(() => {
-      dispatch({ type: "BEGIN_ROUND", topic: pickRandomTopic(topics, state.usedTopicIds) });
-    }, CAMERA_SETTLE_MS);
-    return () => clearTimeout(t);
-  }, [phase, state.usedTopicIds, state.players]);
-
   // challengeIntro: 告知後にチャレンジお題(赤は目標値1〜4)
   useEffect(() => {
     if (phase.name !== "challengeIntro" || !isCpuTurn) return;
@@ -123,7 +114,7 @@ function LocalGame({ onOnline }: { onOnline: () => void }) {
       destinationId: pickDestination(nodes, [START_ID]),
     });
 
-  return <GameView state={state} dispatch={dispatch} remaining={remaining} cpuAnswer={cpuAnswer} startGame={startGame} onOnline={onOnline} canAct={phase.name === 'roundAnswering' || !isCpuTurn}/>;
+  return <GameView state={state} dispatch={dispatch} remaining={remaining} cpuAnswer={cpuAnswer} startGame={startGame} onOnline={onOnline} canAct={phase.name === 'turnStart' || phase.name === 'roundAnswering' || !isCpuTurn}/>;
 }
 
 function GameRouter() {

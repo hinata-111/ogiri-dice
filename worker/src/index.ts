@@ -1,5 +1,7 @@
 import { buildCpuPrompt, buildEvaluatePrompt } from "./prompts";
 import { callGemini } from "./gemini";
+import { EVALUATION_COMMENT_MAX_LENGTH } from "./limits";
+import { isKnownTopic } from "./topics";
 import { RateLimiter } from "./rateLimiter";
 import { roomRoute, reply, type RoomEnv } from './room';
 export { GameRoom } from './room';
@@ -8,11 +10,8 @@ interface Env {
   GEMINI_API_KEY: string;
   ROOMS?: DurableObjectNamespace;
   USE_MOCK?: string;
+  REQUEST_RATE_LIMITER?: RateLimit;
 }
-
-// ホットシートプレイでは人間+CPU複数人が同一IPから連続リクエストするため、
-// 10/分では枯渇しやすい。30/分に緩和。
-const limiter = new RateLimiter(30, 60_000);
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -52,14 +51,18 @@ export default {
     if (new URL(request.url).pathname.startsWith('/api/rooms')) {
       if (!env.ROOMS) return reply({ error: 'オンライン対戦の設定がありません' }, 503);
       const ip = request.headers.get('CF-Connecting-IP') ?? 'unknown';
-      if (!limiter.allow(`room:${ip}`)) return reply({ error: '少し待ってからお試しください' }, 429);
+      try {
+        if (!await new RateLimiter(env.REQUEST_RATE_LIMITER).allow(`ogiri-dice:room:${ip}`)) return reply({ error: '少し待ってからお試しください' }, 429);
+      } catch { return reply({ error: 'アクセス制限を確認できません。少し待ってからお試しください' }, 503); }
       try { return await roomRoute(request, env as RoomEnv); }
       catch { return reply({ error: '入力をご確認ください' }, 400); }
     }
     if (request.method !== "POST") return json({ error: "method_not_allowed" }, 405);
 
     const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
-    if (!limiter.allow(ip)) return json({ error: "rate_limited" }, 429);
+    try {
+      if (!await new RateLimiter(env.REQUEST_RATE_LIMITER).allow(`ogiri-dice:ai:${ip}`)) return json({ error: "rate_limited" }, 429);
+    } catch { return json({ error: "rate_limit_unavailable" }, 503); }
 
     let body: Record<string, unknown>;
     try {
@@ -75,20 +78,23 @@ export default {
       if (
         typeof topic !== "string" || typeof answer !== "string" ||
         topic.length === 0 || topic.length > 200 ||
-        answer.length === 0 || answer.length > 120
+        answer.length === 0 || answer.length > 120 || !isKnownTopic(topic)
       ) {
         return json({ error: "bad_request" }, 400);
       }
       try {
+        const { prompt, systemInstruction } = buildEvaluatePrompt(topic, answer);
         const raw = (await callGemini(
           env.GEMINI_API_KEY,
-          buildEvaluatePrompt(topic, answer),
+          prompt,
           EVAL_SCHEMA,
+          undefined,
+          systemInstruction,
         )) as { score?: unknown; comment?: unknown };
         if (typeof raw.score !== "number" || typeof raw.comment !== "string") {
           return json({ error: "gemini_failed" }, 502);
         }
-        return json({ score: clamp(raw.score, 1, 6), comment: raw.comment });
+        return json({ score: clamp(raw.score, 1, 6), comment: raw.comment.slice(0, EVALUATION_COMMENT_MAX_LENGTH) });
       } catch (e) {
         console.error("evaluate failed:", e);
         return json({ error: "gemini_failed" }, 502);
@@ -99,7 +105,7 @@ export default {
       const { topic, personality } = body as { topic?: unknown; personality?: unknown };
       if (
         typeof topic !== "string" || topic.length === 0 || topic.length > 200 ||
-        (personality !== "safe" && personality !== "bold")
+        (personality !== "safe" && personality !== "bold") || !isKnownTopic(topic)
       ) {
         return json({ error: "bad_request" }, 400);
       }

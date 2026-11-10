@@ -1,22 +1,13 @@
-/** 固定ウィンドウのシンプルなIP毎レート制限(Workerインスタンス内メモリ) */
+/** Cloudflare binding-backed limits; counters are shared within a Cloudflare location. */
 export class RateLimiter {
-  private limit: number;
-  private windowMs: number;
-  private windows = new Map<string, { start: number; count: number }>();
+  private binding: RateLimit | undefined;
 
-  constructor(limit: number, windowMs: number) {
-    this.limit = limit;
-    this.windowMs = windowMs;
+  constructor(binding?: RateLimit) {
+    this.binding = binding;
   }
 
-  allow(key: string, now: number = Date.now()): boolean {
-    const w = this.windows.get(key);
-    if (!w || now - w.start >= this.windowMs) {
-      this.windows.set(key, { start: now, count: 1 });
-      return true;
-    }
-    if (w.count >= this.limit) return false;
-    w.count += 1;
-    return true;
+  async allow(key: string): Promise<boolean> {
+    if (!this.binding) throw new Error('Rate limit binding is missing');
+    return (await this.binding.limit({ key })).success === true;
   }
 }

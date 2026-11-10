@@ -13,11 +13,46 @@ function lobby() {
 function started() {
   const r = lobby();
   command(r, 'token-a', { type: 'start', revision: r.revision }, 1000);
-  tick(r, r.deadline!);
+  command(r, 'token-a', { type: 'beginRound', revision: r.revision }, 1800);
   return r;
 }
 
 describe('authoritative room', () => {
+  it('waits with no deadline before every round and starts the 30 seconds at the button press', () => {
+    const r = lobby();
+    command(r, 'token-a', { type: 'start', revision: r.revision }, 1000);
+    expect(r.deadline).toBeNull();
+    tick(r, 61000);
+    expect(r.game.phase.name).toBe('turnStart');
+    expect(r.game.sharedRound).toBeNull();
+    expect(() => command(r, 'token-b', { type: 'beginRound', revision: r.revision }, 61000)).toThrow();
+    const revision = r.revision;
+    command(r, 'token-a', { type: 'beginRound', revision }, 61000);
+    expect(r.game.phase.name).toBe('roundAnswering');
+    expect(r.deadline).toBe(61000 + ONLINE_ROUND_ANSWER_MS);
+    expect(() => command(r, 'token-a', { type: 'beginRound', revision }, 61000)).toThrow();
+    expect(() => command(r, 'token-a', { type: 'beginRound', revision: r.revision }, 61000)).toThrow();
+  });
+  it('lets a connected participant replace a disconnected host when starting a round', () => {
+    const r = lobby();
+    command(r, 'token-a', { type: 'start', revision: r.revision }, 1000);
+    const revision = r.revision;
+    disconnectMember(r, 'token-a', 'a', 1100);
+    expect(() => command(r, 'token-a', { type: 'beginRound', revision: r.revision }, 1200)).toThrow();
+    expect(() => command(r, 'token-b', { type: 'beginRound', revision }, 1200)).toThrow();
+    command(r, 'token-b', { type: 'beginRound', revision: r.revision }, 1200);
+    expect(r.game.phase.name).toBe('roundAnswering');
+  });
+  it('clears a restored automatic turn deadline without revealing an unwanted topic', () => {
+    const r = lobby();
+    command(r, 'token-a', { type: 'start', revision: r.revision }, 1000);
+    r.deadline = 1800;
+    const restored = JSON.parse(JSON.stringify(r));
+    tick(restored, 2000);
+    expect(restored.deadline).toBeNull();
+    expect(restored.game.phase.name).toBe('turnStart');
+    expect(restored.game.usedTopicIds).toEqual([]);
+  });
   it('requires two connected players and host to start', () => {
     const r = lobby();
     expect(() => command(r, 'token-b', { type: 'start', revision: r.revision }, 1000)).toThrow();
@@ -111,12 +146,20 @@ describe('authoritative room', () => {
     expect(r.expired).toBe(true);
     expect(() => joinRoom(r, '新規', 'new', 1000 + ROOM_TTL_MS)).toThrow();
   });
-  it('finishes a complete unattended game without any connected phones', () => {
+  it('pauses at the next round when everyone disconnects and resumes after reconnecting', () => {
     const r = started(); disconnectMember(r, 'token-a', 'a', 2000); disconnectMember(r, 'token-b', 'b', 2000);
-    for (let i = 0; i < 2000 && r.game.phase.name !== 'gameResult'; i++) tick(r, r.deadline!);
-    expect(r.game.phase.name).toBe('gameResult');
+    let now = 2000;
+    for (let i = 0; i < 100 && r.deadline !== null; i++) { now = r.deadline; tick(r, now); }
+    expect(r.game.phase.name).toBe('turnStart');
+    expect(r.game.round).toBe(2);
+    expect(r.deadline).toBeNull();
+    tick(r, now + 60000);
+    expect(r.game.round).toBe(2);
+    connectMember(r, 'token-b', 'b2', now + 60001);
+    command(r, 'token-b', { type: 'beginRound', revision: r.revision }, now + 60002);
+    expect(r.game.phase.name).toBe('roundAnswering');
+    expect(r.deadline).toBe(now + 60002 + ONLINE_ROUND_ANSWER_MS);
     expect(r.game.players).toHaveLength(2);
-    expect(r.game.round).toBeLessThanOrEqual(30);
   });
 });
 
