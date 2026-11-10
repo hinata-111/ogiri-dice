@@ -29,7 +29,7 @@ export function GameResultScreen({ players, bestAnswers, winnerId, winMoney, onR
             : `規定周回終了！ 最多所持金の ${winner?.name} が優勝！`}
         </p>
         </header>
-        <ol className="rank-list">
+        <ol className="rank-list" aria-label="最終順位">
           {ranked.map((p, i) => (
             <li key={p.id}>
               <span className="rank-number">{i+1}<small>位</small></span><span className="rank-name">{p.name}</span>

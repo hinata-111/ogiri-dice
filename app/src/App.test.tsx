@@ -72,7 +72,7 @@ it('回答・進路選択・3回の到着を経て100万円の優勝からタイ
     fireEvent.click(screen.getByRole('button',{name:'次の目的地へ'}));
   }
   expect(screen.getByRole('heading',{name:'プレイヤー1、優勝！'})).toBeTruthy();
-  expect(within(screen.getByRole('list')).getByText('100万円')).toBeTruthy();
+  expect(within(screen.getByRole('list',{name:'最終順位'})).getByText('100万円')).toBeTruthy();
   fireEvent.click(screen.getByRole('button',{name:'タイトルへ戻る'}));
   expect(screen.getByRole('button',{name:'はじめる'})).toBeTruthy();
 });
@@ -135,7 +135,7 @@ it('CPUだけの設定でもルールを読み、手動で大喜利を開始で�
   expect(document.querySelector('[data-phase="roundResults"]')).toBeTruthy();
 });
 
-it('開始待ちに遊び方や全員の状況を確認しても大喜利を始めない', () => {
+it('開始待ちに遊び方や常設の全員の状況を確認しても大喜利を始めない', () => {
   render(<App/>);
   fireEvent.click(screen.getByRole('button',{name:'はじめる'}));
   fireEvent.click(screen.getByRole('button',{name:'ゲーム開始！'}));
@@ -144,10 +144,8 @@ it('開始待ちに遊び方や全員の状況を確認しても大喜利を始�
   expect(screen.getByRole('list',{name:'ゲームのルール'})).toBeTruthy();
   fireEvent.keyDown(screen.getByRole('dialog'),{key:'Escape'});
   expect(document.activeElement).toBe(screen.getByRole('button',{name:'大喜利をはじめる'}));
-  fireEvent.click(screen.getByRole('button',{name:'みんなの状況'}));
-  expect(screen.getByRole('dialog',{name:'みんなの状況'}).textContent).toMatch(/プレイヤー1.*10万円.*ロボ作家.*10万円/s);
-  fireEvent.click(screen.getByRole('button',{name:'マップへ戻る'}));
-  expect(document.activeElement).toBe(screen.getByRole('button',{name:'みんなの状況'}));
+  expect(screen.getByRole('region',{name:'みんなの状況'}).textContent).toMatch(/プレイヤー1.*10万円.*ロボ作家.*10万円/s);
+  expect(screen.queryByRole('button',{name:'みんなの状況'})).toBeNull();
   act(()=>vi.advanceTimersByTime(60000));
   expect(document.querySelector('[data-phase="turnStart"]')).toBeTruthy();
   expect(screen.queryByLabelText('あなたの回答')).toBeNull();
