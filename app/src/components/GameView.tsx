@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { currentPlayer, type GameState, type GameAction } from '../game/state';
 import { buildNodeMap } from '../game/graph';
 import { ANSWER_TIME_LIMIT_MS, ONLINE_ROUND_ANSWER_MS, WIN_MONEY } from '../game/rules';
@@ -17,16 +17,17 @@ import { ChallengeIntro } from './ChallengeIntro';
 import { ArrivalOverlay } from './ArrivalOverlay';
 import { GameResultScreen } from './GameResultScreen';
 import { GameAudio } from '../audio/GameAudio';
-import { PlayerToken } from '../presentation/StageArt';
-import { playerColors } from '../presentation/palette';
+import { RulesDialog } from './RulesDialog';
+import { TurnControls } from './TurnControls';
 interface Props {
   state: GameState; dispatch: (action: GameAction) => void;
   remaining: number; cpuAnswer: string | null;
   startGame?: (players: PlayerConfig[]) => void; onOnline?: () => void;
   online?: boolean; canAct?: boolean; isMyTurn?: boolean; onExit?: () => void; connected?: boolean;
   playerId?: number | null;
+  startPlayerName?: string;
 }
-export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onOnline, online = false, canAct = true, isMyTurn = canAct, onExit, connected = true, playerId = null }: Props) {
+export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onOnline, online = false, canAct = true, isMyTurn = canAct, onExit, connected = true, playerId = null, startPlayerName }: Props) {
   useViewportHeight();
   const stage = useRef<HTMLDivElement>(null);
   const phase = state.phase;
@@ -36,13 +37,20 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
   const topics = topicsData.topics as Topic[];
   const player = state.players.length ? currentPlayer(state) : null;
   const isCpuTurn = player?.kind === 'cpu';
+  const [rulesOpen, setRulesOpen] = useState(() => phase.name === 'title' || phase.name === 'setup'
+    || phase.name === 'turnStart' && state.round === 1 && state.currentPlayerIndex === 0);
+  const rulesVisible = phase.name === 'turnStart' && rulesOpen;
+  useLayoutEffect(() => {
+    if (phase.name === 'title' || phase.name === 'setup') setRulesOpen(true);
+    else if (phase.name !== 'turnStart') setRulesOpen(false);
+  }, [phase.name]);
   const nodeMap = useMemo(() => buildNodeMap(nodes), [nodes]);
   const timerActive = phase.name === 'awaitingAnswer' && (!isCpuTurn || online);
   useLayoutEffect(() => {
-    const target = ['.answer-form input:not([readonly]):not(:disabled)', '.overlay .primary:not(:disabled)', '.setup-footer .primary', '.title-screen .primary', '.result-body', '.answer-window', '.tokyo-choice']
+    const target = ['.answer-form input:not([readonly]):not(:disabled)', '.overlay .primary:not(:disabled)', '.turn-controls .primary:not(:disabled)', '.turn-controls', '.setup-footer .primary', '.title-screen .primary', '.result-body', '.answer-window', '.tokyo-cell-move']
       .map(selector => stage.current?.querySelector<HTMLElement>(selector)).find(Boolean);
     target?.focus({ preventScroll: true });
-  }, [phase.name]);
+  }, [phase.name, state.currentPlayerIndex, player?.position, canAct, rulesVisible]);
   const inGame = !["title", "setup"].includes(phase.name);
   const destination = state.destinationId ? (nodeMap.get(state.destinationId) ?? null) : null;
   const stateClass =
@@ -56,8 +64,15 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
       <div className="game-layer">
       {inGame&&!online&&<div className="journey-topbar" aria-hidden="true"><strong>大喜利ダイス</strong><span>東京の劇場をめぐる</span></div>}
       {inGame && (
-        <div inert={phase.name!=='moving'}>
-          <TokyoBoard state={state} canAct={canAct} onStep={(nodeId) => dispatch({ type: "STEP_TO", nodeId })} />
+        <div inert={rulesVisible || phase.name !== 'moving' && phase.name !== 'turnStart'} aria-hidden={rulesVisible || undefined}>
+          <TokyoBoard state={state} canAct={canAct} onStep={(nodeId) => dispatch({ type: "STEP_TO", nodeId })}
+            turnControls={phase.name === 'turnStart' ? <TurnControls
+              round={state.round} playerName={player?.name ?? ''} simultaneous={!!state.simultaneous}
+              seconds={(state.simultaneous ? ONLINE_ROUND_ANSWER_MS : ANSWER_TIME_LIMIT_MS)/1000}
+              canStart={canAct} connected={connected} waitingFor={online ? startPlayerName : undefined}
+              onRules={() => setRulesOpen(true)}
+              onBegin={() => dispatch({ type: state.simultaneous ? 'BEGIN_ROUND' : 'BEGIN_TURN', topic: pickRandomTopic(topics, state.usedTopicIds) })}
+            /> : undefined}/>
         </div>
       )}
 
@@ -66,7 +81,7 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
       )}
       {phase.name === "setup" && startGame && <SetupScreen onSubmit={startGame} />}
 
-      {phase.name === "turnStart" && <div className="overlay turn-overlay"><section className="panel turn-panel" key={`${state.round}:${player?.id}`}><span className="turn-ticket">第{state.round}周{!state.simultaneous && ` · ${(player?.id??0)+1}番`}</span><PlayerToken color={playerColors[(player?.id??0)%4]} number={state.simultaneous ? undefined : (player?.id??0)+1}/><p className="eyebrow">さあ、ひとボケいこう！</p><h2>{state.simultaneous ? 'みんなで同じお題に挑戦！' : `${player?.name}の番！`}</h2><p>目指すは <b>{destination?.name}</b>。次の出番を目指そう。</p>{!online&&state.players.some(p => p.kind === 'human') ? <button className="primary" onClick={()=>dispatch({type:state.simultaneous ? 'BEGIN_ROUND' : 'BEGIN_TURN',topic:pickRandomTopic(topics,state.usedTopicIds)})}>お題を見る</button> : <p className="event-note">まもなくお題を発表します</p>}</section></div>}
+      {rulesVisible && <RulesDialog simultaneous={!!state.simultaneous} hasCpu={state.players.some(p => p.kind === 'cpu')} onClose={() => setRulesOpen(false)}/>}
 
       {shared && (phase.name === 'roundAnswering' || phase.name === 'roundEvaluating' || phase.name === 'roundResults') && (
         <section className={`answer-window shared-round-window ${phase.name === 'roundResults' ? 'shared-result-window' : ''}`} tabIndex={-1} aria-label="全員共通のお題">

@@ -2,10 +2,11 @@ import { gameReducer, initialState, currentPlayer, type GameAction, type GameSta
 import { pickRandomTopic } from '../../app/src/game/topics';
 import { pickDestination } from '../../app/src/game/destination';
 import { buildNodeMap, nextStepToward } from '../../app/src/game/graph';
-import { ANSWER_TIME_LIMIT_MS, ONLINE_ROUND_ANSWER_MS, ONLINE_MOVE_MS, ONLINE_RESULT_MS, ONLINE_TURN_MS, ONLINE_CHALLENGE_MS, ONLINE_ARRIVAL_MS, ONLINE_EVALUATION_MS, ROOM_TTL_MS, ROOM_RECONNECT_MS, ROOM_MAX_PLAYERS } from '../../app/src/game/rules';
+import { ANSWER_TIME_LIMIT_MS, ONLINE_ROUND_ANSWER_MS, ONLINE_MOVE_MS, ONLINE_RESULT_MS, ONLINE_CHALLENGE_MS, ONLINE_ARRIVAL_MS, ONLINE_EVALUATION_MS, ROOM_TTL_MS, ROOM_RECONNECT_MS, ROOM_MAX_PLAYERS } from '../../app/src/game/rules';
 import { FALLBACK_EVALUATION } from '../../app/src/ai/evaluator';
 import type { EvaluationResult, MapNode, Topic } from '../../app/src/game/types';
 import type { RoomSnapshot } from '../../app/src/online/protocol';
+import { roundStarter } from '../../app/src/online/protocol';
 import mapData from '../../app/src/data/map.json';
 import topicData from '../../app/src/data/topics.json';
 
@@ -75,7 +76,7 @@ function transition(r: RoomData, action: GameAction, now: number): boolean {
   if (previousPhase === next.phase.name && (next.phase.name === 'roundAnswering' || next.phase.name === 'roundEvaluating')) return true;
   const durations: Partial<Record<GameState['phase']['name'], number>> = {
     roundAnswering: ONLINE_ROUND_ANSWER_MS, roundEvaluating: ONLINE_EVALUATION_MS, roundResults: ONLINE_RESULT_MS,
-    turnStart: ONLINE_TURN_MS, awaitingAnswer: ANSWER_TIME_LIMIT_MS,
+    awaitingAnswer: ANSWER_TIME_LIMIT_MS,
     evaluating: ONLINE_EVALUATION_MS, showingResult: ONLINE_RESULT_MS,
     moving: ONLINE_MOVE_MS, arrival: ONLINE_ARRIVAL_MS, challengeIntro: ONLINE_CHALLENGE_MS,
   };
@@ -101,6 +102,12 @@ export function command(r: RoomData, token: string, raw: unknown, now: number) {
     if (r.game.phase.name !== 'setup' || m.id !== r.hostId || r.members.length < 2 || r.members.some(x => !x.connectionId)) fail('全員の接続後、ホストが開始してください');
     r.members.forEach((x, i) => { x.playerId = i; });
     transition(r, { type: 'START_GAME', simultaneous: true, players: r.members.map(x => ({ name: x.name, kind: 'human' })), nodes, startId: 'shinjuku', destinationId: pickDestination(nodes, ['shinjuku']) }, now);
+    return;
+  }
+  if (c.type === 'beginRound') {
+    const starter = roundStarter({ hostId: r.hostId, members: r.members.map(x => ({ ...x, connected: x.connectionId !== null })) });
+    if (m.id !== starter?.id || r.game.phase.name !== 'turnStart'
+      || !transition(r, { type: 'BEGIN_ROUND', topic: pickRandomTopic(topics, r.game.usedTopicIds) }, now)) fail('開始担当の参加者が大喜利をはじめてください');
     return;
   }
   if (m.playerId === null || currentPlayer(r.game)?.id !== m.playerId) fail('あなたの手番ではありません');
@@ -133,10 +140,14 @@ export function tick(r: RoomData, now: number) {
     }
     return;
   }
+  // Older saved games may still have an automatic turn-start alarm.
+  if (r.game.phase.name === 'turnStart') {
+    if (r.deadline !== null) { r.deadline = null; r.revision++; }
+    return;
+  }
   if (r.deadline === null || now < r.deadline) return;
   const phase = r.game.phase;
   switch (phase.name) {
-    case 'turnStart': transition(r, { type: r.game.simultaneous ? 'BEGIN_ROUND' : 'BEGIN_TURN', topic: pickRandomTopic(topics, r.game.usedTopicIds) }, now); break;
     case 'roundAnswering': transition(r, { type: 'CLOSE_ROUND' }, now); break;
     case 'roundEvaluating': transition(r, { type: 'ROUND_EVALUATION_TIMEOUT' }, now); break;
     case 'roundResults': transition(r, { type: 'PROCEED' }, now); break;

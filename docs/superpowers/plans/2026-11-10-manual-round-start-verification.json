@@ -1,0 +1,469 @@
+{
+  "validatedAt": "2026-11-10T16:28:18.3508439+09:00",
+  "head": "12a1ca63eb3e8f87562b478b2135fcb72fb7844c",
+  "headTree": "cd443dedc3f77f4df65031e762829ae24ddff11e",
+  "environment": "Windows PowerShell; Node.js 24.16.0; npm 11.13.0; local mock evaluation",
+  "workingTree": "Uncommitted source, including pre-existing map changes; hashes identify tested files without staging changes",
+  "commands": [
+    "app: npm test -- --maxWorkers=2 (154 passed)",
+    "app: npm run build (passed)",
+    "app: npm run lint (passed)",
+    "worker: npm test (73 passed)",
+    "worker: npm run typecheck (passed)",
+    "worker: npm run test:integration (8 passed; dry-run and local workerd outside sandbox)"
+  ],
+  "files": [
+    {
+      "path": "app/public/art/tokyo-board-console.png",
+      "sha256": "9aa0fb01e03d4ea3cfdeb75ff57fe371dec696fe4dd2ef519146ff12dde50a60"
+    },
+    {
+      "path": "app/public/art/tokyo-board.png",
+      "sha256": "313ece941a392a37f7379a9bdaee78fa8e767f3104736abaf4cdd523a6ff78b4"
+    },
+    {
+      "path": "app/public/favicon.svg",
+      "sha256": "61bc9a161de58248288e6905425d7180f0624c2865007b97d763fdac12043a66"
+    },
+    {
+      "path": "app/public/icons.svg",
+      "sha256": "b45fa506195cfcdef406ba9f0c77b36ddc1a7c224040926ec70abc2fdea7b93a"
+    },
+    {
+      "path": "app/src/ai/api.test.ts",
+      "sha256": "a7f2866a3db68caeefa9a58d80197926e76b7eca885b917f888361161bc01b02"
+    },
+    {
+      "path": "app/src/ai/api.ts",
+      "sha256": "dfc7a4594e3190c7e923060c152673a5af924927457046658618bd5af0470e00"
+    },
+    {
+      "path": "app/src/ai/evaluator.ts",
+      "sha256": "589826d7293bb98428799f4cf26a11e35f016c1b2c0fba6bd6a60b0ff41b08fb"
+    },
+    {
+      "path": "app/src/ai/index.ts",
+      "sha256": "b6de8af5267add537e2c46b844b94b57998d797d2f82c3e7d71fe9ed64badb13"
+    },
+    {
+      "path": "app/src/ai/mock.test.ts",
+      "sha256": "7af0af9babf505fd64b46e4cb06f71e91777d49ed794948fb36658c5f2f18ec5"
+    },
+    {
+      "path": "app/src/ai/mock.ts",
+      "sha256": "13b2cee3486f6d60f39d8c1146518707897b90aa71adbfa929ca541da4fef228"
+    },
+    {
+      "path": "app/src/App.test.tsx",
+      "sha256": "c722ce7e868883e3f5ce6a236c30fc775372541875a5c122218ce405bd1457ee"
+    },
+    {
+      "path": "app/src/App.tsx",
+      "sha256": "e98ab5a5b56628c26c51e0ef65a1517bbd95ea0df5d8067becaa55ed9da5c5c7"
+    },
+    {
+      "path": "app/src/audio/AudioProvider.test.tsx",
+      "sha256": "73cf086fc1de48286623fc56b4c8674e0a36a3632a1fe21e1febfa2c02136157"
+    },
+    {
+      "path": "app/src/audio/AudioProvider.tsx",
+      "sha256": "90d8549610744de54c833a9910890a84667f16853992d4e5658326419a017618"
+    },
+    {
+      "path": "app/src/audio/context.ts",
+      "sha256": "1200b48ad516197e5e80fbde3877fe4847c2fd2d40e5930e52d51044e2b4bdea"
+    },
+    {
+      "path": "app/src/audio/engine.fidelity.test.ts",
+      "sha256": "871725b1e265d5b9e177d59c71e6798ab91f51b1ca3b97a4591519cde10d1ad7"
+    },
+    {
+      "path": "app/src/audio/engine.test.ts",
+      "sha256": "66785a5e160e30da482049fd48ec20714fad831e7a479ab87a88828c1788b587"
+    },
+    {
+      "path": "app/src/audio/engine.ts",
+      "sha256": "8461cdeb445c804860f5c1b221db7060d773938b5d3fa874cc1ea792186059f5"
+    },
+    {
+      "path": "app/src/audio/events.test.ts",
+      "sha256": "dbe8d0479e25ff718abf56bec8d143504e7c0ff0fbac5f035e06289ce498f8f2"
+    },
+    {
+      "path": "app/src/audio/events.ts",
+      "sha256": "cec8e6220aa8f70372019506c7cb2e14a9cc17b81ccff5d6e6ec084db4a826c2"
+    },
+    {
+      "path": "app/src/audio/GameAudio.test.tsx",
+      "sha256": "bcd4bafd7395dd2ffe00a4e6d00229ee33303042153fe3c2a4de89c9b19bceca"
+    },
+    {
+      "path": "app/src/audio/GameAudio.tsx",
+      "sha256": "2f847d85cf47b7810e9b2d927aa9064cd3a5042df3fa9bed97c00ed27428439b"
+    },
+    {
+      "path": "app/src/audio/score.ts",
+      "sha256": "dfdf71257eaecc9b333aa9eedd199ceab30cc1b8c6f139c9908978e6494256a6"
+    },
+    {
+      "path": "app/src/components/AnswerInput.test.tsx",
+      "sha256": "f09ca21f69e6c5324fc5fd2dabb0c66ebd1dfebb2f6d9a8b5c96f460cfd03b0e"
+    },
+    {
+      "path": "app/src/components/AnswerInput.tsx",
+      "sha256": "dd394190dcbfdd34edebe9ce12aeb28c2dce1418de1e4b07cf30dd1ecbb04f3e"
+    },
+    {
+      "path": "app/src/components/ArrivalOverlay.tsx",
+      "sha256": "d5f822252519f6afde81a10667a52c414574930dccdf544af137da41540f5723"
+    },
+    {
+      "path": "app/src/components/ChallengeIntro.tsx",
+      "sha256": "b9124a2e8a993b4c167e0c8c250344c544c5159a482e7e3bf3135106ff7b849e"
+    },
+    {
+      "path": "app/src/components/GameResultScreen.tsx",
+      "sha256": "9041913b6400e028837eea6b5531ff8a077568619459c3469ca52007f7131ea8"
+    },
+    {
+      "path": "app/src/components/GameView.tsx",
+      "sha256": "3443f6cc37eebef02fc51d1a7d66566b251d9540fe96f8458ba4b5f0cb16c3f5"
+    },
+    {
+      "path": "app/src/components/map/art-layout.test.ts",
+      "sha256": "708718c4aecf3e76f9ff1011b493849808bd3a8a7ed7e7a6f888ee475ababa42"
+    },
+    {
+      "path": "app/src/components/map/art-layout.ts",
+      "sha256": "987ea5d39539c984124288a4b881120f8619e158e9f7f19909cea8ef2d809685"
+    },
+    {
+      "path": "app/src/components/map/choice-layout.test.ts",
+      "sha256": "93f4b151fe4ae7067883626bab3372c7f9ec5f1fbd0645b3ffac8e6a8d0bc05c"
+    },
+    {
+      "path": "app/src/components/map/choice-layout.ts",
+      "sha256": "2e6a214ac1e0bfa721684160eb01dcf858efecd12a16882ce6376f67b364936c"
+    },
+    {
+      "path": "app/src/components/map/GoalArch.tsx",
+      "sha256": "c720195b8dab0604e917849da3ab5b02c5fcdd0bbed357feddab3cf83c0d38c9"
+    },
+    {
+      "path": "app/src/components/map/GoalCell.test.tsx",
+      "sha256": "69fe788426a75b0546c17500443c5c87a339937c13ad4c868f5206a84e2dd5b6"
+    },
+    {
+      "path": "app/src/components/map/reachable-cells.test.ts",
+      "sha256": "d4d413ea34bffd062e5644054de83aac5bc0dcf30b46a80dbfc9a19a88f35e93"
+    },
+    {
+      "path": "app/src/components/map/reachable-cells.ts",
+      "sha256": "1c4e5a598916052736d207ee3ddab9383f5a0d31f4ca12ab080fee6b3763b29f"
+    },
+    {
+      "path": "app/src/components/map/tokyo-board.css",
+      "sha256": "70c2f08260833e331c5a50abc00c4a09ce83f715adfb32c5697eabe539641110"
+    },
+    {
+      "path": "app/src/components/map/TokyoBoard.test.tsx",
+      "sha256": "f58afc5774772bc96d9dcf40909abdfca8a453170ac289c98a21d96f063a029c"
+    },
+    {
+      "path": "app/src/components/map/TokyoBoard.tsx",
+      "sha256": "ca416a3526904a12d17dd934abb4214ec32ef02e552ad84bce3ecb8d0341eb69"
+    },
+    {
+      "path": "app/src/components/map/useMapCamera.ts",
+      "sha256": "a656e7cca88a8e37234a083f40cc629f16111779eeb12eb4c3fd745c3fa5731e"
+    },
+    {
+      "path": "app/src/components/MoneyChange.tsx",
+      "sha256": "c7fa1b53dcb3af3f5979bd66c20f263ed16bb92ecd58cae89d70b7312817caad"
+    },
+    {
+      "path": "app/src/components/ResultOverlay.test.tsx",
+      "sha256": "b3a6d6b51330c82b247ee44dd4011d8921b0cbd9c4f4f03c34bd28addb81aaf5"
+    },
+    {
+      "path": "app/src/components/ResultOverlay.tsx",
+      "sha256": "879002dc7614e0e40ca79d1fc06b3e8636ad461f1ce389e227cf5c82ee7dcc33"
+    },
+    {
+      "path": "app/src/components/SetupScreen.tsx",
+      "sha256": "9d71f3c5be5534274ef0921897ba660a6887546077999ac2f15d21e672024218"
+    },
+    {
+      "path": "app/src/components/TitleScreen.tsx",
+      "sha256": "b195aaaf73c24b4da7c6c6947fc94d91611be6ae99eb42c5f1777f1da693dcaf"
+    },
+    {
+      "path": "app/src/components/TopicCard.tsx",
+      "sha256": "a91e1c24a9e69870cfdcb851dd5f152e34adf9e7dcdf3afa784b20a8c2addf62"
+    },
+    {
+      "path": "app/src/data/map.json",
+      "sha256": "3b4adfed46009b16512d97d99a27bf94962ca08d6683a60e8bc3dd40f012a130"
+    },
+    {
+      "path": "app/src/data/topics.json",
+      "sha256": "c470714571a7b3587667cea5e5d63617c0b3e0a0eb8e7b3dd1ce1be6713770d3"
+    },
+    {
+      "path": "app/src/dev/board-preview.tsx",
+      "sha256": "c72d7d851a8c601f6cd939e8873d6f851d77ecf190d1fa2f905cfc8ff0b6605e"
+    },
+    {
+      "path": "app/src/dev/scene-preview.tsx",
+      "sha256": "465a6dabe1cfbfc836df0470edb385c2b3aaf5f2a35ed4f3ec2b33432dc0384d"
+    },
+    {
+      "path": "app/src/game/destination.test.ts",
+      "sha256": "627c11521c7cd96fdffd45817df5f72f662d05b4fe39d827971bd6eb9fe6a45f"
+    },
+    {
+      "path": "app/src/game/destination.ts",
+      "sha256": "dd75833d48ca5159494d39bd60121aa2743410af8d77e81586defac088dd7921"
+    },
+    {
+      "path": "app/src/game/graph.test.ts",
+      "sha256": "7e8547078c5a3710ade19a2e9e64fc8a0db0752720a306e0ca24081f34bfb6aa"
+    },
+    {
+      "path": "app/src/game/graph.ts",
+      "sha256": "1b3ff2980374ff61f93d94bedd9221ac83c36e046e6e6ca838bb93f2f4067e87"
+    },
+    {
+      "path": "app/src/game/map.test.ts",
+      "sha256": "aacfd5d1c0580d86039d7c8cd37745beade11edf29b3403cf3f211f60b206788"
+    },
+    {
+      "path": "app/src/game/rules.test.ts",
+      "sha256": "3fbd065ce2e74ec0de7edbc4566608fea0d21bb09569dc35f3ea959f0b53d077"
+    },
+    {
+      "path": "app/src/game/rules.ts",
+      "sha256": "accefc0ad67d299c0792becff47bfa71a3ae634eccd61b88a3c0a17fa37831d5"
+    },
+    {
+      "path": "app/src/game/sharedRound.test.ts",
+      "sha256": "e2bce670926de750e56b7a5aa08d6caa1592ee7fea9dd013a772be139c403734"
+    },
+    {
+      "path": "app/src/game/state.test.ts",
+      "sha256": "d2684ba2d6526b25d710183c186165c301d686bb790cd0cefa6b1efb340376f8"
+    },
+    {
+      "path": "app/src/game/state.ts",
+      "sha256": "23ea50b5dcc27095e0da37b553225595e77425613b131914b9bdf814f321939d"
+    },
+    {
+      "path": "app/src/game/topics.test.ts",
+      "sha256": "6bb69489fc38eec60e3b2e843f974eb35d88cfed33f6a440f94f5ff510473581"
+    },
+    {
+      "path": "app/src/game/topics.ts",
+      "sha256": "2c83803e9ad1720c6263d5c29cb007d703f4944dd52fe008d672c70ed3edc42c"
+    },
+    {
+      "path": "app/src/game/types.ts",
+      "sha256": "618cc6df57d94a983362d82ea49e18f9fc1ca4769075f06ed1fd05dd204ad776"
+    },
+    {
+      "path": "app/src/hooks/useCountdown.test.ts",
+      "sha256": "37d22e49017bd0fd953e7f0f43d730ea4d489461a23db45dce5857b0cec099d5"
+    },
+    {
+      "path": "app/src/hooks/useCountdown.ts",
+      "sha256": "1eaed4f20058fe99dd99272900d432853670ffea32e51166533a075eba6e030e"
+    },
+    {
+      "path": "app/src/hooks/useLocalRound.test.tsx",
+      "sha256": "25a5e0c14dfebfeede0585b1f8db8a15544c1cd5de34c219d940e5873524d019"
+    },
+    {
+      "path": "app/src/hooks/useLocalRound.ts",
+      "sha256": "61b2ff1b5ca572985fd70ce112a743131e3e708fb800e099f55d1e708c9a4b97"
+    },
+    {
+      "path": "app/src/hooks/useReducedMotion.ts",
+      "sha256": "ff71c92a17b747b6b4e7a18c795e49b48a31a826fcdcf5f4a3cf68b84ad6a903"
+    },
+    {
+      "path": "app/src/hooks/useViewportHeight.test.tsx",
+      "sha256": "c2109685937abd9e9fc3cfc74b5a6a1bd473c316fa070acbaa7bde6959591d13"
+    },
+    {
+      "path": "app/src/hooks/useViewportHeight.ts",
+      "sha256": "6cec150e08f3e16c72205dfb22a6cc81aefb900b0e0800c555091d98d910c0de"
+    },
+    {
+      "path": "app/src/index.css",
+      "sha256": "608f82c27334232db203652192ad87419658c2e1aa42fe84620fbe2951d82038"
+    },
+    {
+      "path": "app/src/main.tsx",
+      "sha256": "bd7e6c48797c2bfe45cef4d277f79c44913781a80132b75c7248d2ed47de06e3"
+    },
+    {
+      "path": "app/src/online/online.css",
+      "sha256": "345c37136b6618d0021205e34474a97b00c27502ce13ee10d8533e3b7efda5fa"
+    },
+    {
+      "path": "app/src/online/OnlineGame.leave.test.tsx",
+      "sha256": "61d55bdeddfbd11fcacb31a7b4ac55f1b4b8529c65b92180931d76ee710af57c"
+    },
+    {
+      "path": "app/src/online/OnlineGame.start.test.tsx",
+      "sha256": "ffa93e7595cd319ea9677070a17097f089973382b626d6d1716264319ca60ad8"
+    },
+    {
+      "path": "app/src/online/OnlineGame.test.tsx",
+      "sha256": "da113f0b98dbcb6b27b67fc44d9c2a3e1b2fdd7074a041701c5147b8f7cf9c44"
+    },
+    {
+      "path": "app/src/online/OnlineGame.tsx",
+      "sha256": "3b16ef9291e6cfc50ce72e1926f2bdeac9406fb97f395dd7200e2c9472467370"
+    },
+    {
+      "path": "app/src/online/protocol.ts",
+      "sha256": "f446ffdfb6a5fb773c9fcd0c8b50a29e96fdc9dc904434071e64bb854a6185bf"
+    },
+    {
+      "path": "app/src/online/RoomLobby.test.tsx",
+      "sha256": "b634f795c817c231f608a3bb37e0dcef063beec3d6311907cb2b8b5b578e50b8"
+    },
+    {
+      "path": "app/src/online/RoomLobby.tsx",
+      "sha256": "50d43cef6c0a6a5b0addb143ba155d40ca3ae8c6629d2105dd030c0c6e3b3387"
+    },
+    {
+      "path": "app/src/online/useRoom.test.tsx",
+      "sha256": "886383fab35f5598154e66f7248d70cfe594996dbf38f20c444f7abc92c18962"
+    },
+    {
+      "path": "app/src/online/useRoom.ts",
+      "sha256": "c1872aeb3bd686c0d3c2ceb4b699bb00620e9951efab6367d44656873fc5ed70"
+    },
+    {
+      "path": "app/src/presentation/palette.ts",
+      "sha256": "9e2bd9cb440659e6fafade78f53f5f78ffa2066bc9bfe3291d38c65b1dd16039"
+    },
+    {
+      "path": "app/src/presentation/presentation.css",
+      "sha256": "b96d0ffdbe552a4ce464da9c42021d899fe71f9973645728f2c4127c262bfc4a"
+    },
+    {
+      "path": "app/src/presentation/StageArt.tsx",
+      "sha256": "eb03f8d2dadcd41734e5fcbc5b416bc03c3e39f4b56315179b16038c84648125"
+    },
+    {
+      "path": "app/src/ui/constants.ts",
+      "sha256": "c9ca3920d5bedb33dfea46d168dc146d5b400352b3e08083c31e23e45ece53d6"
+    },
+    {
+      "path": "app/package-lock.json",
+      "sha256": "8dad42baab9cd080dff9e4011b3090d4da027182bcfb9ca6b9c30b9b11f794f7"
+    },
+    {
+      "path": "app/package.json",
+      "sha256": "f44f1be0a5070e115dbdb105ba152dc86549c02e141ac3eb541266f221dbf6ee"
+    },
+    {
+      "path": "app/tsconfig.app.json",
+      "sha256": "2a9c04567756b53d0c39725ad65dfeec6d73bfcd948291eb888b25f808cd855f"
+    },
+    {
+      "path": "app/tsconfig.json",
+      "sha256": "770b4140bbb581e2dfd9ea9946ffc9c75a1d86ba7d2db5f77c83e37cbdf9d808"
+    },
+    {
+      "path": "app/tsconfig.node.json",
+      "sha256": "d366cc0827139db39c61815f22491bbfda56c654354a42ad7795143d314e45e8"
+    },
+    {
+      "path": "app/vite.config.ts",
+      "sha256": "b205a9d0085294a2ec7c0b3f2e2ddff91d9091d3f1dbb65dbac7a49e2f077af3"
+    },
+    {
+      "path": "worker/scripts/test-integration.mjs",
+      "sha256": "a2bbb5dd82208f3f24623c111e8a6abf4f6f3944c52a22012e6947bee31333ab"
+    },
+    {
+      "path": "worker/src/gemini.test.ts",
+      "sha256": "2e0d0e61b950087f51787a7c29edcf58aee4ab2ba61de329936d101aa63cf221"
+    },
+    {
+      "path": "worker/src/gemini.ts",
+      "sha256": "1640d26ebaa48c3ff795230798f4f2102115eb912b5d0df620ffc711335112f3"
+    },
+    {
+      "path": "worker/src/index.test.ts",
+      "sha256": "f280aff58aa9f9fb67d660313644df3d81e1581c8816abeed0671208c84dab85"
+    },
+    {
+      "path": "worker/src/index.ts",
+      "sha256": "495120ec3e23612534fd944387c8c646479ff3880cc3f3b69308dfe79ac3fedd"
+    },
+    {
+      "path": "worker/src/limits.ts",
+      "sha256": "1ef97368b363cb249fb5ee22d12e579e89e9e2adbcf6b42805cb8f37a683a1c3"
+    },
+    {
+      "path": "worker/src/prompts.test.ts",
+      "sha256": "f84d7343dbed97d3c73c52a37d9a19cfa2283ec8882c34a7bc628c7d08d51ed1"
+    },
+    {
+      "path": "worker/src/prompts.ts",
+      "sha256": "a19d0bc49b4fef7304c02d13d1a68dbf0184132cb90ec227a25bfce4a977f274"
+    },
+    {
+      "path": "worker/src/rateLimiter.test.ts",
+      "sha256": "2154b2dc45042ad717d6cab7eee08048efddf82790a6e65faacaf16505389aeb"
+    },
+    {
+      "path": "worker/src/rateLimiter.ts",
+      "sha256": "c1f07fed7f38861780ca0306158d05ace9b5a451c4dd62486d30ff1ef30e4012"
+    },
+    {
+      "path": "worker/src/room.ts",
+      "sha256": "9990cd454e463d226aef94c1a766b0e1dc683299de3f519607c198ce97c50992"
+    },
+    {
+      "path": "worker/src/roomModel.test.ts",
+      "sha256": "0df5f35272cbf990398d403aa768260eac068d86ff0815ff0a8592703f751dc0"
+    },
+    {
+      "path": "worker/src/roomModel.ts",
+      "sha256": "46d6cbed7cd8b1387334a5da680648f8553c5ef486df19380b12e97b4a2d8105"
+    },
+    {
+      "path": "worker/src/topics.ts",
+      "sha256": "2a4d3c0bceb6009356ded60486fa8fd24ac90c70100006d10fed984638715779"
+    },
+    {
+      "path": "worker/src/workerEvaluator.test.ts",
+      "sha256": "9fff59616381207d9fdf4819d82ac04cf7ebe7b7e4bc93a02a5ec774f21bc13a"
+    },
+    {
+      "path": "worker/src/workerEvaluator.ts",
+      "sha256": "ce29c68e4d4ed416d1466729bc777ef35818e12b6ff5df27aecb62dfa3d512fd"
+    },
+    {
+      "path": "worker/tests/rooms.integration.mjs",
+      "sha256": "8de4717f36643833cdd06d0ca20f1b8f6144d85b456ae78feb37d9631325178b"
+    },
+    {
+      "path": "worker/package-lock.json",
+      "sha256": "9ad0ea0928af5a39d871431080400c4a7fbfbaf44ca4f964de6fc0dbafe9269b"
+    },
+    {
+      "path": "worker/package.json",
+      "sha256": "ffbafbed62c7a546f0303a105f9278ca470dc8c87efd1de91c3a22de24dd7b7f"
+    },
+    {
+      "path": "worker/tsconfig.json",
+      "sha256": "df116b075b102268a980f53161aaf3c103a756b946e6fb6776f1f2fd900f3ddf"
+    }
+  ]
+}
