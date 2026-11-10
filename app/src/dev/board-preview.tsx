@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { TokyoBoard } from '../components/map/TokyoBoard';
+import { PlayerRoster } from '../components/PlayerRoster';
 import { gameReducer,initialState } from '../game/state';
 import type { MapNode } from '../game/types';
 import map from '../data/map.json';
@@ -17,6 +18,6 @@ function fixture(startId:string){
 }
 export function BoardPreview(){
   const [start,setStart]=useState('odaiba'),[state,setState]=useState(()=>fixture('odaiba'));
-  return <><div className="stage" style={{height:'calc(100dvh - 52px)'}}><TokyoBoard key={start} state={state} onStep={id=>setState(s=>gameReducer(s,{type:'STEP_TO',nodeId:id}))}/></div><div className="board-review-toolbar"><label>確認する地点 <select value={start} onChange={e=>{setStart(e.target.value);setState(fixture(e.target.value))}}>{map.nodes.map(n=><option key={n.id} value={n.id}>{n.name||n.id}</option>)}</select></label><button onClick={()=>setState(fixture(start))}>配置を戻す</button><small>4人同居・全候補の確認用</small></div></>;
+  return <><div className="stage has-player-roster is-local" style={{height:'calc(100dvh - 52px)'}}><div className="game-layer"><PlayerRoster state={state}/><div className="game-content"><TokyoBoard key={start} state={state} onStep={id=>setState(s=>gameReducer(s,{type:'STEP_TO',nodeId:id}))}/></div></div></div><div className="board-review-toolbar"><label>確認する地点 <select value={start} onChange={e=>{setStart(e.target.value);setState(fixture(e.target.value))}}>{map.nodes.map(n=><option key={n.id} value={n.id}>{n.name||n.id}</option>)}</select></label><button onClick={()=>setState(fixture(start))}>配置を戻す</button><small>4人同居・全候補の確認用</small></div></>;
 }
 createRoot(document.getElementById('root')!).render(<BoardPreview/>);

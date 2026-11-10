@@ -19,6 +19,7 @@ import { GameResultScreen } from './GameResultScreen';
 import { GameAudio } from '../audio/GameAudio';
 import { RulesDialog } from './RulesDialog';
 import { TurnControls } from './TurnControls';
+import { PlayerRoster } from './PlayerRoster';
 interface Props {
   state: GameState; dispatch: (action: GameAction) => void;
   remaining: number; cpuAnswer: string | null;
@@ -59,10 +60,11 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
     : "";
 
   return (
-    <div className={`stage${stateClass} ${online?'is-online':'is-local'}`} data-phase={phase.name} ref={stage}>
+    <div className={`stage${stateClass} ${online?'is-online':'is-local'}${inGame?' has-player-roster':''}`} data-phase={phase.name} ref={stage}>
       <GameAudio state={state} remaining={remaining} connected={connected}/>
       <div className="game-layer">
-      {inGame&&!online&&<div className="journey-topbar" aria-hidden="true"><strong>大喜利ダイス</strong><span>東京の劇場をめぐる</span></div>}
+      {inGame&&<PlayerRoster state={state}/>}
+      <div className="game-content">
       {inGame && (
         <div inert={rulesVisible || phase.name !== 'moving' && phase.name !== 'turnStart'} aria-hidden={rulesVisible || undefined}>
           <TokyoBoard state={state} canAct={canAct} onStep={(nodeId) => dispatch({ type: "STEP_TO", nodeId })}
@@ -161,6 +163,7 @@ export function GameView({ state, dispatch, remaining, cpuAnswer, startGame, onO
           onRestart={online ? onExit ?? (() => {}) : () => dispatch({ type: "RESTART" })}
         />
       )}
+      </div>
       </div>
     </div>
   );
